@@ -1,4 +1,4 @@
-
+#!/bin/bash
 echo " Please Enter the first num "
 read num1
 echo " Please Enter the 2nd num "  
