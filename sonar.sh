@@ -1,3 +1,4 @@
+#!/bin/bash
 echo 'switch case demo starts' 
 case $1 in
 start)
