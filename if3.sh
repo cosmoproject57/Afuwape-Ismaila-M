@@ -1,3 +1,4 @@
+#!/bin/bash
 echo Please enter a number
 read num1
 echo Please enter another number
