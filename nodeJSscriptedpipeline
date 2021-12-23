@@ -1,0 +1,41 @@
+
+//scripted pipeline scrip for node JS app.
+
+node {
+    stage ('1-gitClone') {
+        sh  "echo cloning ebay project"
+        git 'https://github.com/Landmark-FintechProjects/nodejs-application'
+        
+    }
+       stage ('2-Test') {
+       sh "echo TEST"
+      //  sh "npm test"
+    }
+      stage ('3-BUILD') {
+        sh "echo build ebay project"
+         nodejs(nodeJSInstallationName: 'nodejs17.3.0') {
+         sh "npm install"
+
+     }
+      }
+        stage ('4-Quality-Sonaqube') {
+         sh "echo SonaqubeCodeQuality project"
+         nodejs(nodeJSInstallationName: 'nodejs17.3.0') {
+         sh "npm run sonar"
+      }
+        }
+      
+    //     stage ('5-Upload Artifact') {
+    //     sh "echo SonaqubeCodeQuality project"
+    // nodejs(nodeJSInstallationName: 'nodejs17.3.0') {
+    //   sh "npm publish"
+    //   }
+    //     }
+          stage ('5-Deploy') {
+          sh "echo SonaqubeCodeQuality project"
+    nodejs(nodeJSInstallationName: 'nodejs17.3.0') {
+       sh "npm start"
+      }
+        }
+        }
+      
