@@ -1,0 +1,32 @@
+#!/bin/bash
+sudo hostname docker
+sudo apt update -y
+sudo apt install docker.io -y
+# added ubuntu to docker group.so that ubuntu user can run sudo command without using sudo
+sudo usermod -aG docker ubuntu
+
+# Install java as jenkins dependency
+sudo apt install openjdk-11-jdk -y
+
+# Install jenkins in ubuntu:
+sudo wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add - 
+sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > \ /etc/apt/sources.list.d/jenkins.list'
+sudo sh -c ‘echo deb https://pkg.jenkins.io/debian-stable binary/ > \ /etc/apt/sources.list.d/jenkins.list’
+
+//worked
+sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+
+sudo app-get update
+sudo apt-get install jenkins -y 
+sudo systemctl start jenkins
+
+# adding jenkins to sudo group so that jenkis can have sudo access to run command like sbin binary.
+echo "jenkins  ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/jenkins"
+# assign password to jenkins.
+echo echo "jenkins:admin" | chpasswd
+#configure password authentication
+sudo sed -i "/^[^#]*PasswordAuthentication[[:space:]]no/c\PasswordAuthentication yes" /etc/ssh/sshd_config
+
+sudo service sshd restart
+# login as jenkins and add jenkins users to docker group.
+sudo usermod -aG docker jenkins
