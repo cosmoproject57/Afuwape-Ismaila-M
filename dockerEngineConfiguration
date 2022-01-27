@@ -9,6 +9,9 @@ sudo usermod -aG docker ubuntu
 sudo apt install openjdk-11-jdk -y
 
 # Install jenkins in ubuntu:
+#online comment explain: add the Jenkins software repository to the sources list and provide the key for authentication
+#didn't use: echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+
 sudo wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add - 
 sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > \ /etc/apt/sources.list.d/jenkins.list'
 sudo sh -c ‘echo deb https://pkg.jenkins.io/debian-stable binary/ > \ /etc/apt/sources.list.d/jenkins.list’
@@ -17,11 +20,18 @@ sudo sh -c ‘echo deb https://pkg.jenkins.io/debian-stable binary/ > \ /etc/apt
 sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
 
 sudo app-get update
+
+//switch to root user
+sudo -i
+
 sudo apt-get install jenkins -y 
 sudo systemctl start jenkins
 
 # adding jenkins to sudo group so that jenkis can have sudo access to run command like sbin binary.
 echo "jenkins  ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/jenkins"
+//correct command
+echo "jenkins  ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/jenkins
+
 # assign password to jenkins.
 echo echo "jenkins:admin" | chpasswd
 #configure password authentication
