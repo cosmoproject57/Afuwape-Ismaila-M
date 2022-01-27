@@ -40,3 +40,7 @@ sudo sed -i "/^[^#]*PasswordAuthentication[[:space:]]no/c\PasswordAuthentication
 sudo service sshd restart
 # login as jenkins and add jenkins users to docker group.
 sudo usermod -aG docker jenkins
+
+
+jenkins@docker:~$ cd jp
+jenkins@docker:~/jp$ sudo apt install maven -y
