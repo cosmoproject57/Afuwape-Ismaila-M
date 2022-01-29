@@ -1,0 +1,78 @@
+pipeline{
+  agent any 
+  tools{
+    maven "maven3.8.4"
+  }
+  stages{
+    stage('GitVlone'){
+      steps{
+        echo "cloning the lastest applications version"
+        git "https://github.com/afuwapemoyo/maven-web-application.git"
+      
+      }
+    }
+      stage('Test+Build'){
+      steps{
+        sh "echo Running unitTesting"
+        sh "mvn clean package"
+        echo "echo test successful and backupArtifacts created"
+
+      }
+    }
+      stage('codeQality'){
+      steps{
+        sh "echo Running detail code analysis"
+        sh "mvn sonar:sonar"
+        sh  "echo All conditions met/passed"
+      }
+    }
+      stage('upLoadArtifacts'){
+      steps{
+        sh "echo Running detail code analysis"
+        sh "mvn deploy"
+        sh "echo backupArtifacts in nexus"
+      }
+    }
+     
+      stage('message'){
+      steps{
+        sh "echo Ci job sucessful" 
+      }
+    }
+    
+    stage('predeployment'){
+      steps{ 
+          sh "echo creating docker image"
+        sh "docker build -t ismailaafuwape/maven-web-app . "
+       // sh "docker login -u ismailaafuwape"
+        sh "docker push ismailaafuwape/maven-web-app"
+      }
+    }
+  }
+} 
+
+
+
+//==========================================
+
+
+//2. Continous deployment job:
+//   deploy_to_docker 
+pipeline{
+  agent any  
+  stages{
+      stage('deployment'){
+      steps{
+        sh "sleep 10"
+        sh "docker rm -f webapp"
+        sh "docker rm -f maven-web-app"
+        sh "echo application is now ready for deployment"
+  //    sh "docker run --name myapp -d p 2000:8080 ismailaafuwape/my-repo"
+  //    sh "docker run --name myapp -d p 2000:8080 ismailaafuwape/maven-web-app"
+  //    sh "docker run -d -p 7000:8080 --name webapp ismailaafuwape/my-repo"
+ // working        sh "docker run -d -p 7000:8080 --name webapp ismailaafuwape/maven-web-app"
+    sh "docker run -d -p 2000:8080 --name webapp ismailaafuwape/my-repo"
+      }
+    }    
+  }
+}
