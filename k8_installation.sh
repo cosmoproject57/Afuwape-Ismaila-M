@@ -45,6 +45,26 @@ sudo systemctl daemon-reload
 sudo systemctl start kubelet
 sudo systemctl enable kubelet.service
 
+
+# login as ubuntu user and run the 3 command below
+#  mkdir -p $HOME/.kube
+# sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+#  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+# we install a weave network plugin
+
+#You will notice from the previous command, that all the pods are running except one: ‘core-dns’. For resolving this we will install a 
+# pod network. To install the weave pod network, run the following command:
+
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
+
+# To verify, if kubectl is working or not, run the following command.
+
+kubectl get pods -o wide -n kube-system
+
+
+
 #sudo kubeadm join 172.31.13.51:6443 --token nsw52x.jqv5lezwzlpfkeuq --discovery-token-ca-cert-hash sha256:289ef23de4847829acf89456fa644f07ad0eab312006a4c0d085af051dc0a83d
 
 //this command will add worker node to yr master node
