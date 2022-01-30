@@ -1,6 +1,8 @@
 #!/bin/bash
 # Common stages for both master and worker nodes
 # This can be use as user data in launch template or launch configutions 
+sudo -i
+hostname masterk8
 sudo swapoff -a
 sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
