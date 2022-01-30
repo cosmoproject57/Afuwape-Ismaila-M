@@ -47,6 +47,9 @@ sudo systemctl enable kubelet.service
 
 #sudo kubeadm join 172.31.13.51:6443 --token nsw52x.jqv5lezwzlpfkeuq --discovery-token-ca-cert-hash sha256:289ef23de4847829acf89456fa644f07ad0eab312006a4c0d085af051dc0a83d
 
+//this command will add worker node to yr master node
+#sudo kubeadm join 172.31.23.77:6443 --token euff21.plpwo5i56j22lazu \
+        --discovery-token-ca-cert-hash sha256:3b132c5960a405943bd2c47663c509e57e105d9ce0f44f0f0525340eb50caa0a
 
 #======================explaination=================
 #======================explaination=================
