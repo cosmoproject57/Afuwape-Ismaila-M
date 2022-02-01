@@ -45,11 +45,17 @@ sudo systemctl daemon-reload
 sudo systemctl start kubelet
 sudo systemctl enable kubelet.service
 
+#as root user run command below
+kubeadm init
 
 # login as ubuntu user and run the 3 command below
-#  mkdir -p $HOME/.kube
+# mkdir -p $HOME/.kube
 # sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-#  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+# sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+# To verify, if kubectl is working or not, run the following command.
+kubectl get pods -o wide -n kube-system
+
 
 # we install a weave network plugin
 
@@ -59,9 +65,7 @@ sudo systemctl enable kubelet.service
 kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 
 
-# To verify, if kubectl is working or not, run the following command.
 
-kubectl get pods -o wide -n kube-system
 
 
 
@@ -142,4 +146,55 @@ sudo systemctl enable kubelet.service
 
 #sudo kubeadm join 172.31.13.51:6443 --token nsw52x.jqv5lezwzlpfkeuq --discovery-token-ca-cert-hash sha256:289ef23de4847829acf89456fa644f07ad0eab312006a4c0d085af051dc0a83d
 
+#===================NODE 2=====================
+
+#!/bin/bash
+# Common stages for both master and worker nodes
+# This can be use as user data in launch template or launch configurations 
+hostname NODE1_K8S
+sudo swapoff -a
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+sudo apt update -y
+sudo apt install -y apt-transport-https -y
+
+sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+
+sudo cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+deb http://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+sudo apt update -y
+sudo apt install -y kubelet kubeadm  containerd kubectl
+# apt-mark hold will prevent the package from being automatically upgraded
+
+sudo apt-mark hold kubelet kubeadm kubectl containerd
+
+sudo cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+sudo cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward = 1
+EOF
+
+sudo sysctl --system
+
+sudo mkdir -p /etc/containerd
+sudo containerd config default | sudo tee /etc/containerd/config.toml
+sudo systemctl restart containerd
+
+# Enable and start kubelet service
+sudo systemctl daemon-reload
+sudo systemctl start kubelet
+sudo systemctl enable kubelet.service
+
+
+sudo kubeadm join 172.31.28.50:6443 --token by1287.f4wnsnmclro0bzk0 \
+        --discovery-token-ca-cert-hash sha256:a87cd5226a087c9ea1db7398b4e7d7229a17bf64c4b2f8af4495a270a5588be8
 
