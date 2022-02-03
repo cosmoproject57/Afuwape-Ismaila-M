@@ -67,17 +67,41 @@ sudo systemctl enable kubelet.service
 #continue as root user
 root@master:~# kubeadm init
 
-#switch to ubuntu user
+#IMPORTANT---switch to ubuntu user ================IMPORTANT======================
 root@master:~# sudo su - ubuntu
 ubuntu@master:~$ mkdir -p $HOME/.kube
 ubuntu@master:~$ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 ubuntu@master:~$ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ubuntu@master:~$ kubectl get all
 ubuntu@master:~$ kubectl get nodes
+NAME     STATUS     ROLES                  AGE     VERSION
+master   NotReady   control-plane,master   5m19s   v1.23.3
+
+
 ubuntu@master:~$ kubectl get pods -o wide -n kube-system
 
 #To install the weave pod network, run the following command:
 ubuntu@master:~$ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
+# 1 
+ubuntu@master:~$ kubectl get nodes
+NAME     STATUS   ROLES                  AGE    VERSION
+master   Ready    control-plane,master   9m4s   v1.23.3
+
+# 2 ADD SECOND NODE
+ubuntu@master:~$ kubectl get nodes
+NAME     STATUS   ROLES                  AGE   VERSION
+master   Ready    control-plane,master   53m   v1.23.3
+node1    Ready    <none>                 22m   v1.23.3
+
+# 3  ADD SECOND NODE
+ubuntu@master:~$ kubectl get nodes
+NAME     STATUS   ROLES                  AGE   VERSION
+master   Ready    control-plane,master   55m   v1.23.3
+node1    Ready    <none>                 23m   v1.23.3
+node13   Ready    <none>                 28s   v1.23.3
+
+
 ubuntu@master:~$ kubectl get nodes
 ubuntu@master:~$ kubectl get pods -o wide -n kube-system 
 ubuntu@master:~$ kubectl get all
