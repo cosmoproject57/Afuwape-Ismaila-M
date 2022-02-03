@@ -19,7 +19,7 @@ sudo sh -c ‘echo deb https://pkg.jenkins.io/debian-stable binary/ > \ /etc/apt
 //worked
 sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
 
-sudo app-get update
+sudo apt-get update
 
 //switch to root user
 sudo -i
