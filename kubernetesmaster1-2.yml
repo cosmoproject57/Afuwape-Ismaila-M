@@ -660,6 +660,148 @@ weave-net-tb8cz                  2/2     Running   1 (12h ago)   12h
 #END=======================================================
 
 
+#NODE1_USER_START=====================EDIT==TOKEN==BELOW==============================================
+
+#!/bin/bash
+# First, login as ‘root’ user because the following set of commands need to be executed with ‘sudo’ permissions.
+
+sudo hostname node1
+
+# Install Required packages and apt keys.
+
+sudo apt-get update -y
+sudo apt-get install -y apt-transport-https
+
+sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+
+sudo cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+
+sudo apt-get update -y
+
+#Turn Off Swap Space
+sudo swapoff -a
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+
+#Install kubeadm, Kubelet, Kubectl, containerd
+sudo apt-get install -y kubelet containerd kubeadm kubectl kubernetes-cni 
+
+# apt-mark hold will prvent the package from being authomatically upgraded or removed
+sudo apt-mark hold kubelet containerd kubeadm kubectl kubernetes-cni
+
+# add containerd and it modules 
+sudo cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+# Setup required sysctl params, these persist across reboots.
+sudo cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+
+# Apply sysctl params without reboot
+sudo sysctl --system
+
+# Configure containerd:
+sudo mkdir -p /etc/containerd
+sudo containerd config default | sudo tee /etc/containerd/config.toml
+
+# Restart containerd:
+sudo systemctl restart containerd
+
+# If uget error releated 2 kubernetes-cni if alreay exists install w/o k-cni
+sudo apt-get install -y kubelet kubeadm kubectl 
+
+# Enable and start kubelet service
+sudo systemctl daemon-reload 
+sudo systemctl start kubelet 
+sudo systemctl enable kubelet.service
+
+sudo kubeadm join 172.31.31.85:6443 --token 3nsr9e.roevr39gv684ycpy \
+        --discovery-token-ca-cert-hash sha256:5d085741fb0c15e149c57d46c1dc6b9e377a15007a9b70db5d2e28dd496e4a6b
+        
+        
+#NODE1_END==========================EDIT==TOKEN==HERE==================================================
+        
+
+
+#NODE13_USER_START===============EDIT==TOKEN==BELOW==================================================
+
+#!/bin/bash
+# First, login as ‘root’ user because the following set of commands need to be executed with ‘sudo’ permissions.
+
+sudo hostname node13
+
+# Install Required packages and apt keys.
+
+sudo apt-get update -y
+sudo apt-get install -y apt-transport-https
+
+sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+
+sudo cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+
+sudo apt-get update -y
+
+#Turn Off Swap Space
+sudo swapoff -a
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+
+#Install kubeadm, Kubelet, Kubectl, containerd
+sudo apt-get install -y kubelet containerd kubeadm kubectl kubernetes-cni 
+
+# apt-mark hold will prvent the package from being authomatically upgraded or removed
+sudo apt-mark hold kubelet containerd kubeadm kubectl kubernetes-cni
+
+# add containerd and it modules 
+sudo cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+# Setup required sysctl params, these persist across reboots.
+sudo cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+
+# Apply sysctl params without reboot
+sudo sysctl --system
+
+# Configure containerd:
+sudo mkdir -p /etc/containerd
+sudo containerd config default | sudo tee /etc/containerd/config.toml
+
+# Restart containerd:
+sudo systemctl restart containerd
+
+# If uget error releated 2 kubernetes-cni if alreay exists install w/o k-cni
+sudo apt-get install -y kubelet kubeadm kubectl 
+
+# Enable and start kubelet service
+sudo systemctl daemon-reload 
+sudo systemctl start kubelet 
+sudo systemctl enable kubelet.service
+
+sudo kubeadm join 172.31.31.85:6443 --token 3nsr9e.roevr39gv684ycpy \
+        --discovery-token-ca-cert-hash sha256:5d085741fb0c15e149c57d46c1dc6b9e377a15007a9b70db5d2e28dd496e4a6b
+
+#NODE13_END===========================EDIT==TOKEN==HERE========================================
 
 
 
