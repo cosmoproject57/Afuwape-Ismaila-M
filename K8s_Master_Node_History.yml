@@ -1,0 +1,3208 @@
+
+ubuntu@ip-172-31-31-85:~$ sudo hostname master
+ubuntu@ip-172-31-31-85:~$ sudo -i
+root@master:~# sudo apt-get update -y
+Hit:1 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic InRelease
+Get:2 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-updates InRelease [8                         8.7 kB]
+Get:3 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-backports InRelease                          [74.6 kB]
+Get:4 http://security.ubuntu.com/ubuntu bionic-security InRelease [88.7 kB]
+Get:5 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 Packa                         ges [8570 kB]
+Get:6 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic/universe Translation                         -en [4941 kB]
+Get:7 http://security.ubuntu.com/ubuntu bionic-security/main amd64 Packages [205                         0 kB]
+Get:8 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic/multiverse amd64 Pac                         kages [151 kB]
+Get:9 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic/multiverse Translati                         on-en [108 kB]
+Get:10 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64                          Packages [2399 kB]
+Get:11 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-updates/main Transl                         ation-en [457 kB]
+Get:12 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-updates/restricted                          amd64 Packages [615 kB]
+Get:13 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-updates/restricted                          Translation-en [84.0 kB]
+Get:14 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-updates/universe am                         d64 Packages [1783 kB]
+Get:15 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-updates/universe Tr                         anslation-en [386 kB]
+Get:16 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-updates/multiverse                          amd64 Packages [27.2 kB]
+Get:17 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-updates/multiverse                          Translation-en [6808 B]
+Get:18 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-backports/main amd6                         4 Packages [10.3 kB]
+Get:19 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-backports/main Tran                         slation-en [4824 B]
+Get:20 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-backports/universe                          amd64 Packages [11.3 kB]
+Get:21 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-backports/universe                          Translation-en [5772 B]
+Get:22 http://security.ubuntu.com/ubuntu bionic-security/main Translation-en [36                         4 kB]
+Get:23 http://security.ubuntu.com/ubuntu bionic-security/restricted amd64 Packag                         es [588 kB]
+Get:24 http://security.ubuntu.com/ubuntu bionic-security/restricted Translation-                         en [80.0 kB]
+Get:25 http://security.ubuntu.com/ubuntu bionic-security/universe amd64 Packages                          [1168 kB]
+Get:26 http://security.ubuntu.com/ubuntu bionic-security/universe Translation-en                          [269 kB]
+Get:27 http://security.ubuntu.com/ubuntu bionic-security/multiverse amd64 Packag                         es [20.9 kB]
+Get:28 http://security.ubuntu.com/ubuntu bionic-security/multiverse Translation-                         en [4732 B]
+Fetched 24.4 MB in 4s (5422 kB/s)
+Reading package lists... Done
+root@master:~# sudo apt-get install -y apt-transport-https
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following NEW packages will be installed:
+  apt-transport-https
+0 upgraded, 1 newly installed, 0 to remove and 35 not upgraded.
+Need to get 4348 B of archives.
+After this operation, 154 kB of additional disk space will be used.
+Get:1 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-updates/universe amd                         64 apt-transport-https all 1.6.14 [4348 B]
+Fetched 4348 B in 0s (0 B/s)
+Selecting previously unselected package apt-transport-https.
+(Reading database ... 57598 files and directories currently installed.)
+Preparing to unpack .../apt-transport-https_1.6.14_all.deb ...
+Unpacking apt-transport-https (1.6.14) ...
+Setting up apt-transport-https (1.6.14) ...
+root@master:~# sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gp                         g | apt-key add -
+OK
+root@master:~# sudo cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+> deb https://apt.kubernetes.io/ kubernetes-xenial main
+> EOF
+root@master:~# cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+> deb https://apt.kubernetes.io/ kubernetes-xenial main
+> EOF
+root@master:~# sudo apt-get update -y
+Hit:1 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic InRelease
+Hit:2 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-updates InRelease
+Hit:3 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-backports InRelease
+Hit:5 http://security.ubuntu.com/ubuntu bionic-security InRelease
+Get:4 https://packages.cloud.google.com/apt kubernetes-xenial InRelease [9383 B]
+Get:6 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 Package                         s [53.6 kB]
+Fetched 63.0 kB in 1s (108 kB/s)
+Reading package lists... Done
+root@master:~# swapoff -a
+root@master:~# sudo swapoff -a
+root@master:~# sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+root@master:~# sudo apt-get install -y kubelet containerd kubeadm kubectl kubern                         etes-cni
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+  conntrack cri-tools runc socat
+The following NEW packages will be installed:
+  conntrack containerd cri-tools kubeadm kubectl kubelet kubernetes-cni runc
+  socat
+0 upgraded, 9 newly installed, 0 to remove and 35 not upgraded.
+Need to get 111 MB of archives.
+After this operation, 487 MB of additional disk space will be used.
+Get:1 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 conntrack                          amd64 1:1.4.4+snapshot20161117-6ubuntu2 [30.6 kB]
+Get:2 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-updates/universe amd                         64 runc amd64 1.0.1-0ubuntu2~18.04.1 [4155 kB]
+Get:4 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic-updates/universe amd                         64 containerd amd64 1.5.5-0ubuntu3~18.04.1 [33.0 MB]
+Get:3 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 cri-too                         ls amd64 1.19.0-00 [11.2 MB]
+Get:5 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 kuberne                         tes-cni amd64 0.8.7-00 [25.0 MB]
+Get:9 http://us-east-2.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 socat amd                         64 1.7.3.2-2ubuntu2 [342 kB]
+Get:6 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 kubelet                          amd64 1.23.3-00 [19.5 MB]
+Get:7 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 kubectl                          amd64 1.23.3-00 [8929 kB]
+Get:8 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 kubeadm                          amd64 1.23.3-00 [8580 kB]
+Fetched 111 MB in 3s (33.2 MB/s)
+Selecting previously unselected package conntrack.
+(Reading database ... 57602 files and directories currently installed.)
+Preparing to unpack .../0-conntrack_1%3a1.4.4+snapshot20161117-6ubuntu2_amd64.de                         b ...
+Unpacking conntrack (1:1.4.4+snapshot20161117-6ubuntu2) ...
+Selecting previously unselected package runc.
+Preparing to unpack .../1-runc_1.0.1-0ubuntu2~18.04.1_amd64.deb ...
+Unpacking runc (1.0.1-0ubuntu2~18.04.1) ...
+Selecting previously unselected package containerd.
+Preparing to unpack .../2-containerd_1.5.5-0ubuntu3~18.04.1_amd64.deb ...
+Unpacking containerd (1.5.5-0ubuntu3~18.04.1) ...
+Selecting previously unselected package cri-tools.
+Preparing to unpack .../3-cri-tools_1.19.0-00_amd64.deb ...
+Unpacking cri-tools (1.19.0-00) ...
+Selecting previously unselected package kubernetes-cni.
+Preparing to unpack .../4-kubernetes-cni_0.8.7-00_amd64.deb ...
+Unpacking kubernetes-cni (0.8.7-00) ...
+Selecting previously unselected package socat.
+Preparing to unpack .../5-socat_1.7.3.2-2ubuntu2_amd64.deb ...
+Unpacking socat (1.7.3.2-2ubuntu2) ...
+Selecting previously unselected package kubelet.
+Preparing to unpack .../6-kubelet_1.23.3-00_amd64.deb ...
+Unpacking kubelet (1.23.3-00) ...
+Selecting previously unselected package kubectl.
+Preparing to unpack .../7-kubectl_1.23.3-00_amd64.deb ...
+Unpacking kubectl (1.23.3-00) ...
+Selecting previously unselected package kubeadm.
+Preparing to unpack .../8-kubeadm_1.23.3-00_amd64.deb ...
+Unpacking kubeadm (1.23.3-00) ...
+Setting up conntrack (1:1.4.4+snapshot20161117-6ubuntu2) ...
+Setting up kubernetes-cni (0.8.7-00) ...
+Setting up runc (1.0.1-0ubuntu2~18.04.1) ...
+Setting up cri-tools (1.19.0-00) ...
+Setting up socat (1.7.3.2-2ubuntu2) ...
+Setting up containerd (1.5.5-0ubuntu3~18.04.1) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/containerd.service →                          /lib/systemd/system/containerd.service.
+Setting up kubelet (1.23.3-00) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/kubelet.service → /l                         ib/systemd/system/kubelet.service.
+Setting up kubectl (1.23.3-00) ...
+Setting up kubeadm (1.23.3-00) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+root@master:~# sudo apt-mark hold kubelet containerd kubeadm kubectl kubernetes-                         cni
+kubelet set on hold.
+containerd set on hold.
+kubeadm set on hold.
+kubectl set on hold.
+kubernetes-cni set on hold.
+root@master:~# cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
+> overlay
+> br_netfilter
+> EOF
+overlay
+br_netfilter
+root@master:~# sudo modprobe overlay
+root@master:~# sudo modprobe br_netfilter
+root@master:~# sudo cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
+> net.bridge.bridge-nf-call-iptables  = 1
+> net.ipv4.ip_forward                 = 1
+> net.bridge.bridge-nf-call-ip6tables = 1
+> EOF
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+root@master:~# sudo sysctl --system
+* Applying /etc/sysctl.d/10-console-messages.conf ...
+kernel.printk = 4 4 1 7
+* Applying /etc/sysctl.d/10-ipv6-privacy.conf ...
+net.ipv6.conf.all.use_tempaddr = 2
+net.ipv6.conf.default.use_tempaddr = 2
+* Applying /etc/sysctl.d/10-kernel-hardening.conf ...
+kernel.kptr_restrict = 1
+* Applying /etc/sysctl.d/10-link-restrictions.conf ...
+fs.protected_hardlinks = 1
+fs.protected_symlinks = 1
+* Applying /etc/sysctl.d/10-lxd-inotify.conf ...
+fs.inotify.max_user_instances = 1024
+* Applying /etc/sysctl.d/10-magic-sysrq.conf ...
+kernel.sysrq = 176
+* Applying /etc/sysctl.d/10-network-security.conf ...
+net.ipv4.conf.default.rp_filter = 1
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.tcp_syncookies = 1
+* Applying /etc/sysctl.d/10-ptrace.conf ...
+kernel.yama.ptrace_scope = 1
+* Applying /etc/sysctl.d/10-zeropage.conf ...
+vm.mmap_min_addr = 65536
+* Applying /usr/lib/sysctl.d/50-default.conf ...
+net.ipv4.conf.all.promote_secondaries = 1
+net.core.default_qdisc = fq_codel
+* Applying /etc/sysctl.d/99-cloudimg-ipv6.conf ...
+net.ipv6.conf.all.use_tempaddr = 0
+net.ipv6.conf.default.use_tempaddr = 0
+* Applying /etc/sysctl.d/99-kubernetes-cri.conf ...
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+* Applying /etc/sysctl.d/99-sysctl.conf ...
+* Applying /etc/sysctl.conf ...
+root@master:~# sudo mkdir -p /etc/containerd
+root@master:~# containerd config default | sudo tee /etc/containerd/config.toml
+disabled_plugins = []
+imports = []
+oom_score = 0
+plugin_dir = ""
+required_plugins = []
+root = "/var/lib/containerd"
+state = "/run/containerd"
+version = 2
+
+[cgroup]
+  path = ""
+
+[debug]
+  address = ""
+  format = ""
+  gid = 0
+  level = ""
+  uid = 0
+
+[grpc]
+  address = "/run/containerd/containerd.sock"
+  gid = 0
+  max_recv_message_size = 16777216
+  max_send_message_size = 16777216
+  tcp_address = ""
+  tcp_tls_cert = ""
+  tcp_tls_key = ""
+  uid = 0
+
+[metrics]
+  address = ""
+  grpc_histogram = false
+
+[plugins]
+
+  [plugins."io.containerd.gc.v1.scheduler"]
+    deletion_threshold = 0
+    mutation_threshold = 100
+    pause_threshold = 0.02
+    schedule_delay = "0s"
+    startup_delay = "100ms"
+
+  [plugins."io.containerd.grpc.v1.cri"]
+    disable_apparmor = false
+    disable_cgroup = false
+    disable_hugetlb_controller = true
+    disable_proc_mount = false
+    disable_tcp_service = true
+    enable_selinux = false
+    enable_tls_streaming = false
+    ignore_image_defined_volumes = false
+    max_concurrent_downloads = 3
+    max_container_log_line_size = 16384
+    netns_mounts_under_state_dir = false
+    restrict_oom_score_adj = false
+    sandbox_image = "k8s.gcr.io/pause:3.5"
+    selinux_category_range = 1024
+    stats_collect_period = 10
+    stream_idle_timeout = "4h0m0s"
+    stream_server_address = "127.0.0.1"
+    stream_server_port = "0"
+    systemd_cgroup = false
+    tolerate_missing_hugetlb_controller = true
+    unset_seccomp_profile = ""
+
+    [plugins."io.containerd.grpc.v1.cri".cni]
+      bin_dir = "/opt/cni/bin"
+      conf_dir = "/etc/cni/net.d"
+      conf_template = ""
+      max_conf_num = 1
+
+    [plugins."io.containerd.grpc.v1.cri".containerd]
+      default_runtime_name = "runc"
+      disable_snapshot_annotations = true
+      discard_unpacked_layers = false
+      no_pivot = false
+      snapshotter = "overlayfs"
+
+      [plugins."io.containerd.grpc.v1.cri".containerd.default_runtime]
+        base_runtime_spec = ""
+        container_annotations = []
+        pod_annotations = []
+        privileged_without_host_devices = false
+        runtime_engine = ""
+        runtime_root = ""
+        runtime_type = ""
+
+        [plugins."io.containerd.grpc.v1.cri".containerd.default_runtime.options]
+
+      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+          base_runtime_spec = ""
+          container_annotations = []
+          pod_annotations = []
+          privileged_without_host_devices = false
+          runtime_engine = ""
+          runtime_root = ""
+          runtime_type = "io.containerd.runc.v2"
+
+          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+            BinaryName = ""
+            CriuImagePath = ""
+            CriuPath = ""
+            CriuWorkPath = ""
+            IoGid = 0
+            IoUid = 0
+            NoNewKeyring = false
+            NoPivotRoot = false
+            Root = ""
+            ShimCgroup = ""
+            SystemdCgroup = false
+
+      [plugins."io.containerd.grpc.v1.cri".containerd.untrusted_workload_runtime                         ]
+        base_runtime_spec = ""
+        container_annotations = []
+        pod_annotations = []
+        privileged_without_host_devices = false
+        runtime_engine = ""
+        runtime_root = ""
+        runtime_type = ""
+
+        [plugins."io.containerd.grpc.v1.cri".containerd.untrusted_workload_runti                         me.options]
+
+    [plugins."io.containerd.grpc.v1.cri".image_decryption]
+      key_model = "node"
+
+    [plugins."io.containerd.grpc.v1.cri".registry]
+      config_path = ""
+
+      [plugins."io.containerd.grpc.v1.cri".registry.auths]
+
+      [plugins."io.containerd.grpc.v1.cri".registry.configs]
+
+      [plugins."io.containerd.grpc.v1.cri".registry.headers]
+
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+
+    [plugins."io.containerd.grpc.v1.cri".x509_key_pair_streaming]
+      tls_cert_file = ""
+      tls_key_file = ""
+
+  [plugins."io.containerd.internal.v1.opt"]
+    path = "/opt/containerd"
+
+  [plugins."io.containerd.internal.v1.restart"]
+    interval = "10s"
+
+  [plugins."io.containerd.metadata.v1.bolt"]
+    content_sharing_policy = "shared"
+
+  [plugins."io.containerd.monitor.v1.cgroups"]
+    no_prometheus = false
+
+  [plugins."io.containerd.runtime.v1.linux"]
+    no_shim = false
+    runtime = "runc"
+    runtime_root = ""
+    shim = "containerd-shim"
+    shim_debug = false
+
+  [plugins."io.containerd.runtime.v2.task"]
+    platforms = ["linux/amd64"]
+
+  [plugins."io.containerd.service.v1.diff-service"]
+    default = ["walking"]
+
+  [plugins."io.containerd.snapshotter.v1.aufs"]
+    root_path = ""
+
+  [plugins."io.containerd.snapshotter.v1.btrfs"]
+    root_path = ""
+
+  [plugins."io.containerd.snapshotter.v1.devmapper"]
+    async_remove = false
+    base_image_size = ""
+    pool_name = ""
+    root_path = ""
+
+  [plugins."io.containerd.snapshotter.v1.native"]
+    root_path = ""
+
+  [plugins."io.containerd.snapshotter.v1.overlayfs"]
+    root_path = ""
+
+  [plugins."io.containerd.snapshotter.v1.zfs"]
+    root_path = ""
+
+[proxy_plugins]
+
+[stream_processors]
+
+  [stream_processors."io.containerd.ocicrypt.decoder.v1.tar"]
+    accepts = ["application/vnd.oci.image.layer.v1.tar+encrypted"]
+    args = ["--decryption-keys-path", "/etc/containerd/ocicrypt/keys"]
+    env = ["OCICRYPT_KEYPROVIDER_CONFIG=/etc/containerd/ocicrypt/ocicrypt_keypro                         vider.conf"]
+    path = "ctd-decoder"
+    returns = "application/vnd.oci.image.layer.v1.tar"
+
+  [stream_processors."io.containerd.ocicrypt.decoder.v1.tar.gzip"]
+    accepts = ["application/vnd.oci.image.layer.v1.tar+gzip+encrypted"]
+    args = ["--decryption-keys-path", "/etc/containerd/ocicrypt/keys"]
+    env = ["OCICRYPT_KEYPROVIDER_CONFIG=/etc/containerd/ocicrypt/ocicrypt_keypro                         vider.conf"]
+    path = "ctd-decoder"
+    returns = "application/vnd.oci.image.layer.v1.tar+gzip"
+
+[timeouts]
+  "io.containerd.timeout.shim.cleanup" = "5s"
+  "io.containerd.timeout.shim.load" = "5s"
+  "io.containerd.timeout.shim.shutdown" = "3s"
+  "io.containerd.timeout.task.state" = "2s"
+
+[ttrpc]
+  address = ""
+  gid = 0
+  uid = 0
+root@master:~# sudo systemctl restart containerd
+root@master:~# sudo apt-get install -y kubelet kubeadm kubectl
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+kubeadm is already the newest version (1.23.3-00).
+kubectl is already the newest version (1.23.3-00).
+kubelet is already the newest version (1.23.3-00).
+0 upgraded, 0 newly installed, 0 to remove and 35 not upgraded.
+root@master:~# sudo systemctl daemon-reload
+root@master:~# sudo systemctl start kubelet
+root@master:~# sudo systemctl enable kubelet.service
+root@master:~# sudo su -
+root@master:~# sudo su - ubuntu
+ubuntu@master:~$ exit
+logout
+root@master:~# kubeadm init
+[init] Using Kubernetes version: v1.23.3
+[preflight] Running pre-flight checks
+[preflight] Pulling images required for setting up a Kubernetes cluster
+[preflight] This might take a minute or two, depending on the speed of your inte                         rnet connection
+[preflight] You can also perform this action in beforehand using 'kubeadm config                          images pull'
+[certs] Using certificateDir folder "/etc/kubernetes/pki"
+[certs] Generating "ca" certificate and key
+[certs] Generating "apiserver" certificate and key
+[certs] apiserver serving cert is signed for DNS names [kubernetes kubernetes.de                         fault kubernetes.default.svc kubernetes.default.svc.cluster.local master] and IP                         s [10.96.0.1 172.31.31.85]
+[certs] Generating "apiserver-kubelet-client" certificate and key
+[certs] Generating "front-proxy-ca" certificate and key
+[certs] Generating "front-proxy-client" certificate and key
+[certs] Generating "etcd/ca" certificate and key
+[certs] Generating "etcd/server" certificate and key
+[certs] etcd/server serving cert is signed for DNS names [localhost master] and                          IPs [172.31.31.85 127.0.0.1 ::1]
+[certs] Generating "etcd/peer" certificate and key
+[certs] etcd/peer serving cert is signed for DNS names [localhost master] and IP                         s [172.31.31.85 127.0.0.1 ::1]
+[certs] Generating "etcd/healthcheck-client" certificate and key
+[certs] Generating "apiserver-etcd-client" certificate and key
+[certs] Generating "sa" key and public key
+[kubeconfig] Using kubeconfig folder "/etc/kubernetes"
+[kubeconfig] Writing "admin.conf" kubeconfig file
+[kubeconfig] Writing "kubelet.conf" kubeconfig file
+[kubeconfig] Writing "controller-manager.conf" kubeconfig file
+[kubeconfig] Writing "scheduler.conf" kubeconfig file
+[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/ku                         belet/kubeadm-flags.env"
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.y                         aml"
+[kubelet-start] Starting the kubelet
+[control-plane] Using manifest folder "/etc/kubernetes/manifests"
+[control-plane] Creating static Pod manifest for "kube-apiserver"
+[control-plane] Creating static Pod manifest for "kube-controller-manager"
+[control-plane] Creating static Pod manifest for "kube-scheduler"
+[etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests                         "
+[wait-control-plane] Waiting for the kubelet to boot up the control plane as sta                         tic Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
+[apiclient] All control plane components are healthy after 21.003536 seconds
+[upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in                          the "kube-system" Namespace
+[kubelet] Creating a ConfigMap "kubelet-config-1.23" in namespace kube-system wi                         th the configuration for the kubelets in the cluster
+NOTE: The "kubelet-config-1.23" naming of the kubelet ConfigMap is deprecated. O                         nce the UnversionedKubeletConfigMap feature gate graduates to Beta the default n                         ame will become just "kubelet-config". Kubeadm upgrade will handle this transiti                         on transparently.
+[upload-certs] Skipping phase. Please see --upload-certs
+[mark-control-plane] Marking the node master as control-plane by adding the labe                         ls: [node-role.kubernetes.io/master(deprecated) node-role.kubernetes.io/control-                         plane node.kubernetes.io/exclude-from-external-load-balancers]
+[mark-control-plane] Marking the node master as control-plane by adding the tain                         ts [node-role.kubernetes.io/master:NoSchedule]
+[bootstrap-token] Using token: 3nsr9e.roevr39gv684ycpy
+[bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Rol                         es
+[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to get no                         des
+[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to post C                         SRs in order for nodes to get long term certificate credentials
+[bootstrap-token] configured RBAC rules to allow the csrapprover controller auto                         matically approve CSRs from a Node Bootstrap Token
+[bootstrap-token] configured RBAC rules to allow certificate rotation for all no                         de client certificates in the cluster
+[bootstrap-token] Creating the "cluster-info" ConfigMap in the "kube-public" nam                         espace
+[kubelet-finalize] Updating "/etc/kubernetes/kubelet.conf" to point to a rotatab                         le kubelet client certificate and key
+[addons] Applied essential addon: CoreDNS
+[addons] Applied essential addon: kube-proxy
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as                          root:
+
+kubeadm join 172.31.31.85:6443 --token 3nsr9e.roevr39gv684ycpy \
+        --discovery-token-ca-cert-hash sha256:5d085741fb0c15e149c57d46c1dc6b9e37                         7a15007a9b70db5d2e28dd496e4a6b
+root@master:~# sudo su - ubuntu
+ubuntu@master:~$ mkdir -p $HOME/.kube
+ubuntu@master:~$ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+ubuntu@master:~$ sudo chown $(id -u):$(id -g) $HOME/.kube/config
+ubuntu@master:~$ kubectl get all
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   4m45s
+ubuntu@master:~$ kubectl get nodes
+NAME     STATUS     ROLES                  AGE     VERSION
+master   NotReady   control-plane,master   5m19s   v1.23.3
+ubuntu@master:~$ kubectl get pods -o wide -n kube-system
+NAME                             READY   STATUS    RESTARTS   AGE     IP                                      NODE     NOMINATED NODE   READINESS GATES
+coredns-64897985d-bhs5h          0/1     Pending   0          6m24s   <none>                                  <none>   <none>           <none>
+coredns-64897985d-pb4rf          0/1     Pending   0          6m24s   <none>                                  <none>   <none>           <none>
+etcd-master                      1/1     Running   0          6m25s   172.31.31.                         85   master   <none>           <none>
+kube-apiserver-master            1/1     Running   0          6m25s   172.31.31.                         85   master   <none>           <none>
+kube-controller-manager-master   1/1     Running   0          6m25s   172.31.31.                         85   master   <none>           <none>
+kube-proxy-n5nkj                 1/1     Running   0          6m25s   172.31.31.                         85   master   <none>           <none>
+kube-scheduler-master            1/1     Running   0          6m25s   172.31.31.                         85   master   <none>           <none>
+ubuntu@master:~$ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version                         =$(kubectl version | base64 | tr -d '\n')"
+serviceaccount/weave-net created
+clusterrole.rbac.authorization.k8s.io/weave-net created
+clusterrolebinding.rbac.authorization.k8s.io/weave-net created
+role.rbac.authorization.k8s.io/weave-net created
+rolebinding.rbac.authorization.k8s.io/weave-net created
+daemonset.apps/weave-net created
+ubuntu@master:~$ kubectl get nodes
+NAME     STATUS   ROLES                  AGE    VERSION
+master   Ready    control-plane,master   9m4s   v1.23.3
+ubuntu@master:~$ kubectl get nodes
+NAME     STATUS   ROLES                  AGE   VERSION
+master   Ready    control-plane,master   53m   v1.23.3
+node1    Ready    <none>                 22m   v1.23.3
+ubuntu@master:~$ kubectl get nodes
+NAME     STATUS   ROLES                  AGE   VERSION
+master   Ready    control-plane,master   55m   v1.23.3
+node1    Ready    <none>                 23m   v1.23.3
+node13   Ready    <none>                 28s   v1.23.3
+ubuntu@master:~$ kubectl get pods -o wide -n kube-system                                                 NAME                             READY   STATUS    RESTARTS      AGE   IP             NODE     NOMINAT   ED NODE   READINESS GATES
+coredns-64897985d-bhs5h          1/1     Running   0             80m   10.32.0.2      master   <none>              <none>
+coredns-64897985d-pb4rf          1/1     Running   0             80m   10.32.0.3      master   <none>              <none>
+etcd-master                      1/1     Running   0             80m   172.31.31.85   master   <none>              <none>
+kube-apiserver-master            1/1     Running   0             80m   172.31.31.85   master   <none>              <none>
+kube-controller-manager-master   1/1     Running   0             80m   172.31.31.85   master   <none>              <none>
+kube-proxy-45f7n                 1/1     Running   0             25m   172.31.6.54    node13   <none>              <none>
+kube-proxy-6mgb8                 1/1     Running   0             48m   172.31.1.172   node1    <none>              <none>
+kube-proxy-n5nkj                 1/1     Running   0             80m   172.31.31.85   master   <none>              <none>
+kube-scheduler-master            1/1     Running   0             80m   172.31.31.85   master   <none>              <none>
+weave-net-c476d                  2/2     Running   1 (73m ago)   73m   172.31.31.85   master   <none>              <none>
+weave-net-m5f2d                  2/2     Running   1 (24m ago)   25m   172.31.6.54    node13   <none>              <none>
+weave-net-tb8cz                  2/2     Running   1 (48m ago)   48m   172.31.1.172   node1    <none>              <none>
+ubuntu@master:~$ kubectl get pods all
+Error from server (NotFound): pods "all" not found
+ubuntu@master:~$ kubectl get all
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   80m
+ubuntu@master:~$ kubectl get pods
+No resources found in default namespace.
+ubuntu@master:~$ kubectl get pod
+No resources found in default namespace.
+ubuntu@master:~$ kubectl get ns
+NAME              STATUS   AGE
+default           Active   81m
+kube-node-lease   Active   81m
+kube-public       Active   81m
+kube-system       Active   81m
+ubuntu@master:~$ kubectl create ns test
+namespace/test created
+ubuntu@master:~$ kubectl create ns prod -v=6
+I0203 04:06:01.948926   27327 loader.go:372] Config loaded from file:  /home/ubuntu/.kube/config
+I0203 04:06:01.964086   27327 round_trippers.go:553] POST https://172.31.31.85:6443/api/v1/namespaces?   fieldManager=kubectl-create 201 Created in 13 milliseconds
+namespace/prod created
+ubuntu@master:~$ vi qa.yml
+ubuntu@master:~$ vi qa.yml
+ubuntu@master:~$ cat qa.yml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+
+ubuntu@master:~$ kubectl get ns
+NAME              STATUS   AGE
+default           Active   84m
+kube-node-lease   Active   84m
+kube-public       Active   84m
+kube-system       Active   84m
+prod              Active   2m56s
+test              Active   3m12s
+ubuntu@master:~$ kubectl apply -f qa.yml -v=7
+I0203 04:10:52.876810   27411 loader.go:372] Config loaded from file:  /home/ubuntu/.kube/config
+I0203 04:10:52.877564   27411 round_trippers.go:463] GET https://172.31.31.85:6443/openapi/v2?timeout=   32s
+I0203 04:10:52.877581   27411 round_trippers.go:469] Request Headers:
+I0203 04:10:52.877604   27411 round_trippers.go:473]     Accept: application/com.github.proto-openapi.   spec.v2@v1.0+protobuf
+I0203 04:10:52.877617   27411 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64) kub   ernetes/816c97a
+I0203 04:10:52.898660   27411 round_trippers.go:574] Response Status: 200 OK in 21 milliseconds
+I0203 04:10:52.980538   27411 round_trippers.go:463] GET https://172.31.31.85:6443/api/v1/namespaces/d   ev
+I0203 04:10:52.980565   27411 round_trippers.go:469] Request Headers:
+I0203 04:10:52.980575   27411 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64) kub   ernetes/816c97a
+I0203 04:10:52.980601   27411 round_trippers.go:473]     Accept: application/json
+I0203 04:10:52.983127   27411 round_trippers.go:574] Response Status: 404 Not Found in 2 milliseconds
+I0203 04:10:52.983467   27411 round_trippers.go:463] POST https://172.31.31.85:6443/api/v1/namespaces?   fieldManager=kubectl-client-side-apply
+I0203 04:10:52.983487   27411 round_trippers.go:469] Request Headers:
+I0203 04:10:52.983517   27411 round_trippers.go:473]     Accept: application/json
+I0203 04:10:52.983533   27411 round_trippers.go:473]     Content-Type: application/json
+I0203 04:10:52.983545   27411 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64) kub   ernetes/816c97a
+I0203 04:10:52.995685   27411 round_trippers.go:574] Response Status: 201 Created in 12 milliseconds
+namespace/dev created
+I0203 04:10:52.997045   27411 apply.go:447] Running apply post-processor function
+ubuntu@master:~$ kubectl get ns
+NAME              STATUS   AGE
+default           Active   87m
+dev               Active   63s
+kube-node-lease   Active   87m
+kube-public       Active   87m
+kube-system       Active   87m
+prod              Active   5m54s
+test              Active   6m10s
+ubuntu@master:~$ kubectl delete dev
+error: the server doesn't have a resource type "dev"
+ubuntu@master:~$ kubectl delete namespace dev
+namespace "dev" deleted
+ubuntu@master:~$ kubectl create -f qa.yml -v=7
+I0203 04:14:21.507146   27490 loader.go:372] Config loaded from file:  /home/ubuntu/.kube/config
+I0203 04:14:21.507887   27490 round_trippers.go:463] GET https://172.31.31.85:6443/openapi/v2?timeout=   32s
+I0203 04:14:21.507918   27490 round_trippers.go:469] Request Headers:
+I0203 04:14:21.507933   27490 round_trippers.go:473]     Accept: application/com.github.proto-openapi.   spec.v2@v1.0+protobuf
+I0203 04:14:21.507945   27490 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64) kub   ernetes/816c97a
+I0203 04:14:21.530842   27490 round_trippers.go:574] Response Status: 200 OK in 22 milliseconds
+I0203 04:14:21.621041   27490 round_trippers.go:463] POST https://172.31.31.85:6443/api/v1/namespaces?   fieldManager=kubectl-create
+I0203 04:14:21.621073   27490 round_trippers.go:469] Request Headers:
+I0203 04:14:21.621084   27490 round_trippers.go:473]     Accept: application/json
+I0203 04:14:21.621093   27490 round_trippers.go:473]     Content-Type: application/json
+I0203 04:14:21.621100   27490 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64) kub   ernetes/816c97a
+I0203 04:14:21.634565   27490 round_trippers.go:574] Response Status: 201 Created in 13 milliseconds
+namespace/dev created
+ubuntu@master:~$ kubectl get ns
+NAME              STATUS   AGE
+default           Active   90m
+dev               Active   33s
+kube-node-lease   Active   90m
+kube-public       Active   90m
+kube-system       Active   90m
+prod              Active   8m53s
+test              Active   9m9s
+ubuntu@master:~$ kubectl create ns fintech
+namespace/fintech created
+ubuntu@master:~$ kubectl api - resources | grep -i namespace
+error: unknown command "api" for "kubectl"
+
+Did you mean this?
+        cp
+        api-versions
+        api-resources
+ubuntu@master:~$ kubectl api-resources | grep -i namespace
+NAME                              SHORTNAMES   APIVERSION                                                 NAMESPACED   KIND
+namespaces                        ns           v1                                                         false        Namespace
+ubuntu@master:~$ kubectl get ns
+NAME              STATUS   AGE
+default           Active   98m
+dev               Active   8m17s
+fintech           Active   6m46s
+kube-node-lease   Active   98m
+kube-public       Active   98m
+kube-system       Active   98m
+prod              Active   16m
+test              Active   16m
+ubuntu@master:~$ cat .kube/config
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMvakNDQWVhZ                    0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQj                    RYRFRJeU1ESXdNekF5TkRNME4xb1hEVE15TURJd01UQXlORE0wTjFvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVp                    YSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBT1NpClVzelhyeWQx                    YjJtYm4zQktYZGZ0ekJ3SW9MU0RXZll0NWFGUWE1Uk1wYjI5WnYwMVh2VnpTMSsyNmJEa2tqMGEKUEVwUFQxZ                    080SXF0V2pmRnRKTE5WakZjWHhuanUrVlhTS2prMyt2OHVYZVZOdmw2ZjhhNXFCdXNMa09PMm0rbQo5VXU4dE                    JMSWkyNlh0bWNIWnRmdUxreStrY3pYSVh2MmhtTDNTVVNMQmhNVHhjUmRsR2JIcXBqZDR5MFRXUFVuClpJa1F                    0ekJrcitBN2FsTDJWQUVmVGNaSkpERWR2RldwdTArMitpUGlGdU5sRjdJMlhRNVFaTVRIMkZKZHc0QVMKV0Mx                    bkpCeUg0b3dQMjhNTmhad3dMU1RUbnBwaHhoMmJiNWpLc2lQakNiSDJjU0c4QjdzcWUySGg3ZWJyVURlNwpwa                    lFJT0dCNGJ4dExoMDdlUW1FQ0F3RUFBYU5aTUZjd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi                    93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZQSmRqNlI1YUZ3VkNDQW1ORTBiVTZJTG1Pc3BNQlVHQTFVZEVRUU8                    KTUF5Q0NtdDFZbVZ5Ym1WMFpYTXdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBREhnTUgybFVXNnYzTWtNbkd2                    ZgpqRk1yTGtnY01PSDRIZ2ovVklHaFBXakNLVEZZUEYzWW52c0wyYzNEVEtHdFlyWjRuN0FwY0ZBWm1KTDAva                    3I0ClVCVkpFblE3eCtMTkJQY1d1RFBJUURxVS8vMFY3MWJpT2JFMWFqc041UjZaVzhDQWhaQXdUbWxkcXJpdm                    hucXYKU2ZNc00vQmJQejh1TDFMVUhsNDZQMmE0VFl0THdJWFpXaEFmcXBGWFdRK0dLRHVlVDNBY1QzZEhtSnF                    RWlZPUwp6SEo4eklaRkR1NXJSQlUzU2VzVi8wdjdWdlcwZEIyS280T2F3bmZPUUZCcDhSeGN4MlY1eHRFMkxP                    S3ZkUHNTCkFBSExpQzY3OGlRb2gvLzYzYXVkVXprcWFjU0FWT3Uwbnh6c3ovOWF1Y0pzRTdnWVF3MzFFSW9DU                    UxublVWMWYKdjNvPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    server: https://172.31.31.85:6443
+  name: kubernetes
+contexts:
+- context:
+    cluster: kubernetes
+    user: kubernetes-admin
+  name: kubernetes-admin@kubernetes
+current-context: kubernetes-admin@kubernetes
+kind: Config
+preferences: {}
+users:
+- name: kubernetes-admin
+  user:
+    client-certificate-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURJVENDQWdtZ0F3                    SUJBZ0lJWjUwMGpCbndQTzR3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1W                    lhSbGN6QWVGdzB5TWpBeU1ETXdNalF6TkRkYUZ3MHlNekF5TURNd01qUXpOVEJhTURReApGekFWQmdOVkJBb1                    REbk41YzNSbGJUcHRZWE4wWlhKek1Sa3dGd1lEVlFRREV4QnJkV0psY201bGRHVnpMV0ZrCmJXbHVNSUlCSWp                    BTkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXdsVHdISm1rTElmN2swbGEKWnlveDdkZFp3                    c1hZY3RGcXJzZ0hQMm9JNFgwN2JzcmVQT2VSeVc1WkNiZkRoTHU1dEF6MFVtMlhrSm1QNVJ6TQpkOFF3bU1RT                    m13cUFnVkVjVUJTRk5VZ054bWJPSXJvckc1OFZuVXJ2OHRDbGJ5UW5WUENqdDlxRjk3Q1hrOXRWCnBBNU1WWl                    UxeHA5Uk4xcW40dGdYSW01Yy9zWU9wa29zT1VBdk1BWmd5TS9NeHNzekIyVUVQTDBLSVV6aSt3M3YKZ21XT2V                    jdTQ5dGtqTnkrQ0UxSUhxNitBSzM2ZUVDcUN6dUttWkF1TWpHSVFKaGNtb3JZbEV2Y29RcEsxL0ZzdAowMC9M                    WmRUa3ExTVQ3RWFNWEJoSkhNbjlTNDFGeEpUWUJ2akh5TzRaOExEL1hFSGRGUm1pdThKMUpTRzZXRXNGCnMrN                    ThQd0lEQVFBQm8xWXdWREFPQmdOVkhROEJBZjhFQkFNQ0JhQXdFd1lEVlIwbEJBd3dDZ1lJS3dZQkJRVUgKQX                    dJd0RBWURWUjBUQVFIL0JBSXdBREFmQmdOVkhTTUVHREFXZ0JUeVhZK2tlV2hjRlFnZ0pqUk5HMU9pQzVqcgp                    LVEFOQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBUDJYb1JhU3h4WThpRGF2Znpqa2xNNGUyUXVIUlQvL3NLNDV4                    CmxOSW44V0JQcGNPNndqMXBCRE8vNERhM0tkYzN3TmRzbTdGeTlpT0dpbmV3SjR1MEtqM3lqeUhDT1BjbDMzU                    0EKTElwTHZTUkN6VW45Rlc0ckNqRFRxWmN5Mys3TmZCRWh4OE42NmlyRVdzSnBEWnRTT0kvbnhXOHVXL0JvZ1                    Y0YQpuMENkYmVNd29jayt3SmxrNXFRS2p6b015bFhnZkdERmdDL3llazdOUnQvY1J6Z1kzbndBMUZ6NCtIUDR                    QRWtMCjVvakFsMmRXSTZPa05VQ29iNitqMWR5YjRNRDNXZU5RQ3NrUGNMaCtrWjl0aHBoSUV6MzlpanhKd3Js                    bGVxei8KSUNacXBVZkR4RlpabG9nck5kajRvWGNvMXZzanNPMitwczVwZUtYaHdDVDhtVGgxQ0E9PQotLS0tL                    UVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    client-key-data: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb3dJQkFBS0NBUUVB                    d2xUd0hKbWtMSWY3azBsYVp5b3g3ZGRad3NYWWN0RnFyc2dIUDJvSTRYMDdic3JlClBPZVJ5VzVaQ2JmRGhMd                    TV0QXowVW0yWGtKbVA1UnpNZDhRd21NUU5td3FBZ1ZFY1VCU0ZOVWdOeG1iT0lyb3IKRzU4Vm5VcnY4dENsYn                    lRblZQQ2p0OXFGOTdDWGs5dFZwQTVNVlpVMXhwOVJOMXFuNHRnWEltNWMvc1lPcGtvcwpPVUF2TUFaZ3lNL01                    4c3N6QjJVRVBMMEtJVXppK3czdmdtV09lY3U0OXRrak55K0NFMUlIcTYrQUszNmVFQ3FDCnp1S21aQXVNakdJ                    UUpoY21vcllsRXZjb1FwSzEvRnN0MDAvTFpkVGtxMU1UN0VhTVhCaEpITW45UzQxRnhKVFkKQnZqSHlPNFo4T                    EQvWEVIZEZSbWl1OEoxSlNHNldFc0ZzKzU4UHdJREFRQUJBb0lCQUVVLzgxaWR2NDFHMy9WNgpmRWFyR0tQQ3                    krL0doUDFWZHdqVnF3K0QvNm9xOEZUbzRnMGVFQ3VSc1JUdmNUTUptb0Y0NUUvRFVmRnJaNFdqCm41RkdUbk1                    CMmo5WG5MZDRhZmgzZDRpbkpwRis3UkllK1dHY2JSMWlLT09FU28reWVIbWlUeFVqUC80bDViNEEKdVNIL0ht                    Q1pEVks4VHpyRWlYTWl3Z3U0L0ZhbEtkSXZwbFNrcEwvYm94NzdVUnFVU0VaYVd6elJ2TEhDNU9ZNwpweHd5a                    EJ0TVZZaitLVXdXZmJTT01oOWFDaG9YM2FqUWlTNENJSml0TmU0Z3d1Tzhwa2lKU0g0bjNYOWZxVkk0Clc1cE                    pFbnJPenV3azk4L1NNUEU4d2ltU3dsTm1BcFhSUW9WbzQrd3lzQ3RkaGoyZ3NrS0hlSHNFL0Zja3hnTEIKQlp                    hdVVmRUNnWUVBOUJ6c09sbUc5bDZDT2t0ZGo1ejB3enVxOGtNQzNITW9BQ2lZUm90RFJ5cFRlVjRhTXlmYwo4                    TUVFV2NWU2NJTCtobWpnZkZISzZDemtURWlBRzRQOW91TGEya2UzUXNIa1lDb3lVUVFGWkNLV0Q5VzBndlpqC                    nJmanhkc1FvM3RQcWV6NmEzTS9QTUFDQjJ5N2xTNm1WeFVhSjhPeSsrU2ZsV3VGaVFpVDJYbXNDZ1lFQXk4dH                    oKTkhQREIwUVZlRmhwcW5tTzJPbG5mVFpLZ1hvbGJVYzN3V1BFeFpIT0lxU25VckRRR29IRXpjZ1FSUFBmblp                    PSQp0RnVEZlhkNmswdm1KMXZMMXZVemVwZmJiTmdxTEZJM3kxb0R4NUxiZEpTQ0MxbTBIcHQ1NndkQzZrUVJl                    NVEwCjNTeExmbTF2RWJuR2JEY0RobUFSODl2TkF2aHNJYVZFRjl0N3BuMENnWUJWZ01meFRDaHNwUC9DUVdHZ                    EN1SGsKZkVMTkpsR2JPNjZZRjUvMm5aTE1HM1F2ZjVsM3I0L0F1Q3E0OHRlRVZ5MmxrSmlJa3ZHYVR4Y0w3Uj                    BLQmpwUgowbG5MdVBEa3JoczYzNnpPR2JWMXRIT1JTazQyek94dkpGSVhRbS82VkltOTcxaTQzUVQ2RUVOcnJ                    VcGRMU0lyCmZpQ1V4YWZDaDRuYlFqUnpiSlRxendLQmdGajQ1YjhNbXlUYzhKS3Q1dFBxWmhjRkw0MVcyb2hV                    ajJwNklUbHAKR1VzNE1NcW5IL1hXQThUT3l1RWNheDN2YXIwYzRCMzlwaFpzeHpMdmUvZks5OTlOQmNDTDg5d                    zlNNHhPQ05YYQo0ck9LeGd6TG1VcmpTdVBoOVFSTEUwZTdsL1pmNmdSMWhqQVlEdG1xUlpxUkdoVGNkSG9HaU                    NhMzFsMktEWVJzCjZqcnhBb0dCQUpFbzREY3NhaG5FR3FxaHJ2UFAxMFVNYW5Hb2xVMThsTEpUNHdTWXViNUs                    wRDlYRXFnall3NTcKcDJpVEVqWnlCZGNkS2ZTWXNLd2NESHdOdENrUzlMUmwwZmtPMU9vb1MvdE40eXA1UGpY                    ZFkxdFdyK05PQllwMAp5N3dFMFJzWStJUjh2K1VUMU5IdDQyKzRFbnhDZ0NUaDdUTEQ2VzZWUXpzcit3V0tKc                    VBzCi0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
+ubuntu@master:~$
+ubuntu@master:~$ kubectl get all
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   100m
+ubuntu@master:~$ kubectl get ns
+NAME              STATUS   AGE
+default           Active   101m
+dev               Active   11m
+fintech           Active   9m47s
+kube-node-lease   Active   101m
+kube-public       Active   101m
+kube-system       Active   101m
+prod              Active   19m
+test              Active   19m
+ubuntu@master:~$ kubectl get ns -n default
+NAME              STATUS   AGE
+default           Active   102m
+dev               Active   12m
+fintech           Active   10m
+kube-node-lease   Active   102m
+kube-public       Active   102m
+kube-system       Active   102m
+prod              Active   20m
+test              Active   20m
+ubuntu@master:~$ kubectl get all -n default
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   102m
+ubuntu@master:~$ kubectl get all
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   102m
+ubuntu@master:~$ kubectl get all
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   103m
+ubuntu@master:~$ kubectl config set-context --current --namespace=default
+Context "kubernetes-admin@kubernetes" modified.
+ubuntu@master:~$ kubectl get all
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   104m
+ubuntu@master:~$ kubectl get pod
+No resources found in default namespace.
+ubuntu@master:~$ kubectl config set-context --current --namespace=test
+Context "kubernetes-admin@kubernetes" modified.
+ubuntu@master:~$ kubectl get pod
+No resources found in test namespace.
+ubuntu@master:~$ kubectl get ns
+NAME              STATUS   AGE
+default           Active   105m
+dev               Active   15m
+fintech           Active   14m
+kube-node-lease   Active   105m
+kube-public       Active   105m
+kube-system       Active   105m
+prod              Active   23m
+test              Active   24m
+ubuntu@master:~$ kubectl get pod -n default
+No resources found in default namespace.
+ubuntu@master:~$ kubectl get pod -n test
+No resources found in test namespace.
+ubuntu@master:~$ kubectl get pod -n kube-system
+NAME                             READY   STATUS    RESTARTS      AGE
+coredns-64897985d-bhs5h          1/1     Running   0             106m
+coredns-64897985d-pb4rf          1/1     Running   0             106m
+etcd-master                      1/1     Running   0             106m
+kube-apiserver-master            1/1     Running   0             106m
+kube-controller-manager-master   1/1     Running   0             106m
+kube-proxy-45f7n                 1/1     Running   0             51m
+kube-proxy-6mgb8                 1/1     Running   0             74m
+kube-proxy-n5nkj                 1/1     Running   0             106m
+kube-scheduler-master            1/1     Running   0             106m
+weave-net-c476d                  2/2     Running   1 (99m ago)   99m
+weave-net-m5f2d                  2/2     Running   1 (50m ago)   51m
+weave-net-tb8cz                  2/2     Running   1 (74m ago)   74m
+ubuntu@master:~$ mkdir manifests
+ubuntu@master:~$ cd manifests/
+ubuntu@master:~/manifests$ vi pod.yml
+ubuntu@master:~/manifests$ vi pod.yml
+ubuntu@master:~/manifests$ kubectl apply -f pod.yml --dry-run=true
+W0203 04:38:24.158232   27941 helpers.go:612] --dry-run=true is deprecated (boolean v                    alue) and can be replaced with --dry-run=client.
+error: error validating "pod.yml": error validating data: ValidationError(Pod.metadat                    a): unknown field "nmespace" in io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta; if y                    ou choose to ignore these errors, turn validation off with --validate=false
+ubuntu@master:~/manifests$ vi pod.yml
+ubuntu@master:~/manifests$ kubectl apply -f pod.yml --dry-run=true
+W0203 04:39:01.271036   27953 helpers.go:612] --dry-run=true is deprecated (boolean v                    alue) and can be replaced with --dry-run=client.
+pod/webapp-pod created (dry run)
+pod/myapp-pod created (dry run)
+ubuntu@master:~/manifests$ kubectl apply -f pod.yml --dry-run=client
+pod/webapp-pod created (dry run)
+pod/myapp-pod created (dry run)
+ubuntu@master:~/manifests$ kubectl get pod
+No resources found in test namespace.
+ubuntu@master:~/manifests$ kubectl get pod -n dev
+No resources found in dev namespace.
+ubuntu@master:~/manifests$ kubectl config set-context --current --namespace=dev
+Context "kubernetes-admin@kubernetes" modified.
+ubuntu@master:~/manifests$ kubectl get pod
+No resources found in dev namespace.
+ubuntu@master:~/manifests$ kubectl apply -f pod.yml -v=7
+I0203 04:42:22.187167   28028 loader.go:372] Config loaded from file:  /home/ubuntu/.                    kube/config
+I0203 04:42:22.187939   28028 round_trippers.go:463] GET https://172.31.31.85:6443/op                    enapi/v2?timeout=32s
+I0203 04:42:22.187957   28028 round_trippers.go:469] Request Headers:
+I0203 04:42:22.187972   28028 round_trippers.go:473]     User-Agent: kubectl/v1.23.3                     (linux/amd64) kubernetes/816c97a
+I0203 04:42:22.187986   28028 round_trippers.go:473]     Accept: application/com.gith                    ub.proto-openapi.spec.v2@v1.0+protobuf
+I0203 04:42:22.209943   28028 round_trippers.go:574] Response Status: 200 OK in 21 mi                    lliseconds
+I0203 04:42:22.314634   28028 round_trippers.go:463] GET https://172.31.31.85:6443/ap                    i/v1/namespaces/dev/pods/webapp-pod
+I0203 04:42:22.314662   28028 round_trippers.go:469] Request Headers:
+I0203 04:42:22.314679   28028 round_trippers.go:473]     Accept: application/json
+I0203 04:42:22.314694   28028 round_trippers.go:473]     User-Agent: kubectl/v1.23.3                     (linux/amd64) kubernetes/816c97a
+I0203 04:42:22.316811   28028 round_trippers.go:574] Response Status: 404 Not Found i                    n 2 milliseconds
+I0203 04:42:22.317079   28028 round_trippers.go:463] GET https://172.31.31.85:6443/ap                    i/v1/namespaces/dev
+I0203 04:42:22.317099   28028 round_trippers.go:469] Request Headers:
+I0203 04:42:22.317113   28028 round_trippers.go:473]     Accept: application/json
+I0203 04:42:22.317128   28028 round_trippers.go:473]     User-Agent: kubectl/v1.23.3                     (linux/amd64) kubernetes/816c97a
+I0203 04:42:22.318761   28028 round_trippers.go:574] Response Status: 200 OK in 1 mil                    liseconds
+I0203 04:42:22.318931   28028 round_trippers.go:463] POST https://172.31.31.85:6443/a                    pi/v1/namespaces/dev/pods?fieldManager=kubectl-client-side-apply
+I0203 04:42:22.318951   28028 round_trippers.go:469] Request Headers:
+I0203 04:42:22.318968   28028 round_trippers.go:473]     Content-Type: application/js                    on
+I0203 04:42:22.318985   28028 round_trippers.go:473]     Accept: application/json
+I0203 04:42:22.318998   28028 round_trippers.go:473]     User-Agent: kubectl/v1.23.3                     (linux/amd64) kubernetes/816c97a
+I0203 04:42:22.328452   28028 round_trippers.go:574] Response Status: 201 Created in                     9 milliseconds
+pod/webapp-pod created
+I0203 04:42:22.329055   28028 round_trippers.go:463] GET https://172.31.31.85:6443/ap                    i/v1/namespaces/dev/pods/myapp-pod
+I0203 04:42:22.329147   28028 round_trippers.go:469] Request Headers:
+I0203 04:42:22.329218   28028 round_trippers.go:473]     Accept: application/json
+I0203 04:42:22.329283   28028 round_trippers.go:473]     User-Agent: kubectl/v1.23.3                     (linux/amd64) kubernetes/816c97a
+I0203 04:42:22.330989   28028 round_trippers.go:574] Response Status: 404 Not Found i                    n 1 milliseconds
+I0203 04:42:22.331280   28028 round_trippers.go:463] GET https://172.31.31.85:6443/ap                    i/v1/namespaces/dev
+I0203 04:42:22.331303   28028 round_trippers.go:469] Request Headers:
+I0203 04:42:22.331316   28028 round_trippers.go:473]     Accept: application/json
+I0203 04:42:22.331330   28028 round_trippers.go:473]     User-Agent: kubectl/v1.23.3                     (linux/amd64) kubernetes/816c97a
+I0203 04:42:22.332961   28028 round_trippers.go:574] Response Status: 200 OK in 1 mil                    liseconds
+I0203 04:42:22.333254   28028 round_trippers.go:463] POST https://172.31.31.85:6443/a                    pi/v1/namespaces/dev/pods?fieldManager=kubectl-client-side-apply
+I0203 04:42:22.333354   28028 round_trippers.go:469] Request Headers:
+I0203 04:42:22.333421   28028 round_trippers.go:473]     Content-Type: application/js                    on
+I0203 04:42:22.333487   28028 round_trippers.go:473]     User-Agent: kubectl/v1.23.3                     (linux/amd64) kubernetes/816c97a
+I0203 04:42:22.333551   28028 round_trippers.go:473]     Accept: application/json
+I0203 04:42:22.337237   28028 round_trippers.go:574] Response Status: 201 Created in                     3 milliseconds
+pod/myapp-pod created
+I0203 04:42:22.338108   28028 apply.go:447] Running apply post-processor function
+ubuntu@master:~/manifests$ kubectl get pod
+NAME         READY   STATUS    RESTARTS   AGE
+myapp-pod    1/1     Running   0          39s
+webapp-pod   1/1     Running   0          39s
+ubuntu@master:~/manifests$ kubectl describe pod myapp-pod
+Name:         myapp-pod
+Namespace:    dev
+Priority:     0
+Node:         node13/172.31.6.54
+Start Time:   Thu, 03 Feb 2022 04:42:22 +0000
+Labels:       app=myapp
+Annotations:  <none>
+Status:       Running
+IP:           10.36.0.2
+IPs:
+  IP:  10.36.0.2
+Containers:
+  myapp-c:
+    Container ID:   containerd://31367a18f1798abb6bdd79e4f9d01fabff98cc78c27376f33276                    0e971ff0da46
+    Image:          mylandmarktech/hello
+    Image ID:       docker.io/mylandmarktech/hello@sha256:5254fd5e59cd01774ca16268886                    60facc45e6ecf3483f3fdb725d1fb7c6bbe5a
+    Port:           80/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Thu, 03 Feb 2022 04:42:25 +0000
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-p9k4z (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  kube-api-access-p9k4z:
+    Type:                    Projected (a volume that contains injected data from mul                    tiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300                    s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 3                    00s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  101s  default-scheduler  Successfully assigned dev/myapp-pod to                     node13
+  Normal  Pulling    100s  kubelet            Pulling image "mylandmarktech/hello"
+  Normal  Pulled     98s   kubelet            Successfully pulled image "mylandmarkte                    ch/hello" in 2.500869943s
+  Normal  Created    98s   kubelet            Created container myapp-c
+  Normal  Started    98s   kubelet            Started container myapp-c
+ubuntu@master:~/manifests$ kubectl get pod
+NAME         READY   STATUS    RESTARTS   AGE
+myapp-pod    1/1     Running   0          5m50s
+webapp-pod   1/1     Running   0          5m50s
+ubuntu@master:~/manifests$ kubectl get pod -o yaml
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"labels":{"app":                    "myapp"},"name":"myapp-pod","namespace":"dev"},"spec":{"containers":[{"image":"myland                    marktech/hello","name":"myapp-c","ports":[{"containerPort":80}]}]}}
+    creationTimestamp: "2022-02-03T04:42:22Z"
+    labels:
+      app: myapp
+    name: myapp-pod
+    namespace: dev
+    resourceVersion: "10112"
+    uid: 4bdccf89-46a6-46c9-96c0-232abe92626a
+  spec:
+    containers:
+    - image: mylandmarktech/hello
+      imagePullPolicy: Always
+      name: myapp-c
+      ports:
+      - containerPort: 80
+        protocol: TCP
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-p9k4z
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: node13
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-p9k4z
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2022-02-03T04:42:22Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2022-02-03T04:42:26Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2022-02-03T04:42:26Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2022-02-03T04:42:22Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://31367a18f1798abb6bdd79e4f9d01fabff98cc78c27376f332760                    e971ff0da46
+      image: docker.io/mylandmarktech/hello:latest
+      imageID: docker.io/mylandmarktech/hello@sha256:5254fd5e59cd01774ca1626888660fac                    c45e6ecf3483f3fdb725d1fb7c6bbe5a
+      lastState: {}
+      name: myapp-c
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2022-02-03T04:42:25Z"
+    hostIP: 172.31.6.54
+    phase: Running
+    podIP: 10.36.0.2
+    podIPs:
+    - ip: 10.36.0.2
+    qosClass: BestEffort
+    startTime: "2022-02-03T04:42:22Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"labels":{"app":                    "webapp"},"name":"webapp-pod","namespace":"dev"},"spec":{"containers":[{"image":"myla                    ndmarktech/java-web-app","name":"webapp-c","ports":[{"containerPort":8080}]}]}}
+    creationTimestamp: "2022-02-03T04:42:22Z"
+    labels:
+      app: webapp
+    name: webapp-pod
+    namespace: dev
+    resourceVersion: "10140"
+    uid: df70eae7-8a79-4202-ada5-c4546bdea30e
+  spec:
+    containers:
+    - image: mylandmarktech/java-web-app
+      imagePullPolicy: Always
+      name: webapp-c
+      ports:
+      - containerPort: 8080
+        protocol: TCP
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-b9ks9
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: node13
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-b9ks9
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2022-02-03T04:42:22Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2022-02-03T04:42:43Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2022-02-03T04:42:43Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2022-02-03T04:42:22Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: containerd://35c043900fd083d66f8067efed72257f79ded82fa531b7ecacc05                    88736d5d924
+      image: docker.io/mylandmarktech/java-web-app:latest
+      imageID: docker.io/mylandmarktech/java-web-app@sha256:a5a9e13be290deeda2a774a8a                    f5804cadbb3d5e4db7bd7dac9d1872a53bec7cb
+      lastState: {}
+      name: webapp-c
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2022-02-03T04:42:43Z"
+    hostIP: 172.31.6.54
+    phase: Running
+    podIP: 10.36.0.1
+    podIPs:
+    - ip: 10.36.0.1
+    qosClass: BestEffort
+    startTime: "2022-02-03T04:42:22Z"
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME         READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE                       READINESS GATES
+myapp-pod    1/1     Running   0          7m13s   10.36.0.2   node13   <none>                               <none>
+webapp-pod   1/1     Running   0          7m13s   10.36.0.1   node13   <none>                               <none>
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME         READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINES         S GATES
+myapp-pod    1/1     Running   0          7m21s   10.36.0.2   node13   <none>           <none>
+webapp-pod   1/1     Running   0          7m21s   10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ curl -v 10.36.0.2:80
+* Rebuilt URL to: 10.36.0.2:80/
+*   Trying 10.36.0.2...
+* TCP_NODELAY set
+* Connected to 10.36.0.2 (10.36.0.2) port 80 (#0)
+> GET / HTTP/1.1
+> Host: 10.36.0.2
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Server: nginx/1.8.0
+< Date: Thu, 03 Feb 2022 04:53:03 GMT
+< Content-Type: text/html; charset=UTF-8
+< Transfer-Encoding: chunked
+< Connection: keep-alive
+< X-Powered-By: PHP/5.6.14
+<
+<html>
+<head>
+        <title>Hello world!</title>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type      ='text/css'>
+        <style>
+        body {
+                background-color: white;
+                text-align: center;
+                padding: 50px;
+                font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+        }
+
+        #logo {
+                margin-bottom: 40px;
+        }
+        </style>
+</head>
+<body>
+        <img id="logo" src="logo.png" />
+        <h1>Hello world!</h1>
+        <h3>My hostname is myapp-pod</h3>                       <h3>Links found</h3>
+                                        <b>KUBERNETES</b> listening in 443 available at tcp://10.96      .0.1:443<br />
+                                </body>
+</html>
+* Connection #0 to host 10.36.0.2 left intact
+ubuntu@master:~/manifests$ curl -v 10.36.0.1:8080
+* Rebuilt URL to: 10.36.0.1:8080/
+*   Trying 10.36.0.1...
+* TCP_NODELAY set
+* Connected to 10.36.0.1 (10.36.0.1) port 8080 (#0)
+> GET / HTTP/1.1
+> Host: 10.36.0.1:8080
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Server: Apache-Coyote/1.1
+< Content-Type: text/html;charset=UTF-8
+< Transfer-Encoding: chunked
+< Date: Thu, 03 Feb 2022 04:53:51 GMT
+<
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Apache Tomcat/8.0.20</title>
+        <link href="favicon.ico" rel="icon" type="image/x-icon" />
+        <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link href="tomcat.css" rel="stylesheet" type="text/css" />
+    </head>
+
+    <body>
+        <div id="wrapper">
+            <div id="navigation" class="curved container">
+                <span id="nav-home"><a href="http://tomcat.apache.org/">Home</a></span>
+                <span id="nav-hosts"><a href="/docs/">Documentation</a></span>
+                <span id="nav-config"><a href="/docs/config/">Configuration</a></span>
+                <span id="nav-examples"><a href="/examples/">Examples</a></span>
+                <span id="nav-wiki"><a href="http://wiki.apache.org/tomcat/FrontPage">Wiki</a></spa      n>
+                <span id="nav-lists"><a href="http://tomcat.apache.org/lists.html">Mailing Lists</a      ></span>
+                <span id="nav-help"><a href="http://tomcat.apache.org/findhelp.html">Find Help</a><      /span>
+                <br class="separator" />
+            </div>
+            <div id="asf-box">
+                <h1>Apache Tomcat/8.0.20</h1>
+            </div>
+            <div id="upper" class="curved container">
+                <div id="congrats" class="curved container">
+                    <h2>If you're seeing this, you've successfully installed Tomcat. Congratulation      s!</h2>
+                </div>
+                <div id="notice">
+                    <img src="tomcat.png" alt="[tomcat logo]" />
+                    <div id="tasks">
+                        <h3>Recommended Reading:</h3>
+                        <h4><a href="/docs/security-howto.html">Security Considerations HOW-TO</a><      /h4>
+                        <h4><a href="/docs/manager-howto.html">Manager Application HOW-TO</a></h4>
+                        <h4><a href="/docs/cluster-howto.html">Clustering/Session Replication HOW-T      O</a></h4>
+                    </div>
+                </div>
+                <div id="actions">
+                    <div class="button">
+                        <a class="container shadow" href="/manager/status"><span>Server Status</spa      n></a>
+                    </div>
+                    <div class="button">
+                        <a class="container shadow" href="/manager/html"><span>Manager App</span></      a>
+                    </div>
+                    <div class="button">
+                        <a class="container shadow" href="/host-manager/html"><span>Host Manager</s      pan></a>
+                    </div>
+                </div>
+                <!--
+                <br class="separator" />
+                -->
+                <br class="separator" />
+            </div>
+            <div id="middle" class="curved container">
+                <h3>Developer Quick Start</h3>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/docs/setup.html">Tomcat Setup</a></p>
+                        <p><a href="/docs/appdev/">First Web Application</a></p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/docs/realm-howto.html">Realms &amp; AAA</a></p>
+                        <p><a href="/docs/jndi-datasource-examples-howto.html">JDBC DataSources</a>      </p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/examples/">Examples</a></p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="http://wiki.apache.org/tomcat/Specifications">Servlet Specifica      tions</a></p>
+                        <p><a href="http://wiki.apache.org/tomcat/TomcatVersions">Tomcat Versions</      a></p>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <div id="lower">
+                <div id="low-manage" class="">
+                    <div class="curved container">
+                        <h3>Managing Tomcat</h3>
+                        <p>For security, access to the <a href="/manager/html">manager webapp</a> i      s restricted.
+                        Users are defined in:</p>
+                        <pre>$CATALINA_HOME/conf/tomcat-users.xml</pre>
+                        <p>In Tomcat 8.0 access to the manager application is split between
+                           different users. &nbsp; <a href="/docs/manager-howto.html">Read more...<      /a></p>
+                        <br />
+                        <h4><a href="/docs/RELEASE-NOTES.txt">Release Notes</a></h4>
+                        <h4><a href="/docs/changelog.html">Changelog</a></h4>
+                        <h4><a href="http://tomcat.apache.org/migration.html">Migration Guide</a></      h4>
+                        <h4><a href="http://tomcat.apache.org/security.html">Security Notices</a></      h4>
+                    </div>
+                </div>
+                <div id="low-docs" class="">
+                    <div class="curved container">
+                        <h3>Documentation</h3>
+                        <h4><a href="/docs/">Tomcat 8.0 Documentation</a></h4>
+                        <h4><a href="/docs/config/">Tomcat 8.0 Configuration</a></h4>
+                        <h4><a href="http://wiki.apache.org/tomcat/FrontPage">Tomcat Wiki</a></h4>
+                        <p>Find additional important configuration information in:</p>
+                        <pre>$CATALINA_HOME/RUNNING.txt</pre>
+                        <p>Developers may be interested in:</p>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/bugreport.html">Tomcat 8.0 Bug Da      tabase</a></li>
+                            <li><a href="/docs/api/index.html">Tomcat 8.0 JavaDocs</a></li>
+                            <li><a href="http://svn.apache.org/repos/asf/tomcat/tc8.0.x/">Tomcat 8.      0 SVN Repository</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="low-help" class="">
+                    <div class="curved container">
+                        <h3>Getting Help</h3>
+                        <h4><a href="http://tomcat.apache.org/faq/">FAQ</a> and <a href="http://tom      cat.apache.org/lists.html">Mailing Lists</a></h4>
+                        <p>The following mailing lists are available:</p>
+                        <ul>
+                            <li id="list-announce"><strong><a href="http://tomcat.apache.org/lists.      html#tomcat-announce">tomcat-announce</a><br />
+                                Important announcements, releases, security vulnerability notificat      ions. (Low volume).</strong>
+                            </li>
+                            <li><a href="http://tomcat.apache.org/lists.html#tomcat-users">tomcat-u      sers</a><br />
+                                User support and discussion
+                            </li>
+                            <li><a href="http://tomcat.apache.org/lists.html#taglibs-user">taglibs-      user</a><br />
+                                User support and discussion for <a href="http://tomcat.apache.org/t      aglibs/">Apache Taglibs</a>
+                            </li>
+                            <li><a href="http://tomcat.apache.org/lists.html#tomcat-dev">tomcat-dev      </a><br />
+                                Development mailing list, including commit messages
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <div id="footer" class="curved container">
+                <div class="col20">
+                    <div class="container">
+                        <h4>Other Downloads</h4>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/download-connectors.cgi">Tomcat C      onnectors</a></li>
+                            <li><a href="http://tomcat.apache.org/download-native.cgi">Tomcat Nativ      e</a></li>
+                            <li><a href="http://tomcat.apache.org/taglibs/">Taglibs</a></li>
+                            <li><a href="/docs/deployer-howto.html">Deployer</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Other Documentation</h4>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/connectors-doc/">Tomcat Connector      s</a></li>
+                            <li><a href="http://tomcat.apache.org/connectors-doc/">mod_jk Documenta      tion</a></li>
+                            <li><a href="http://tomcat.apache.org/native-doc/">Tomcat Native</a></l      i>
+                            <li><a href="/docs/deployer-howto.html">Deployer</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Get Involved</h4>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/getinvolved.html">Overview</a></l      i>
+                            <li><a href="http://tomcat.apache.org/svn.html">SVN Repositories</a></l      i>
+                            <li><a href="http://tomcat.apache.org/lists.html">Mailing Lists</a></li      >
+                            <li><a href="http://wiki.apache.org/tomcat/FrontPage">Wiki</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Miscellaneous</h4>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/contact.html">Contact</a></li>
+                            <li><a href="http://tomcat.apache.org/legal.html">Legal</a></li>
+                            <li><a href="http://www.apache.org/foundation/sponsorship.html">Sponsor      ship</a></li>
+                            <li><a href="http://www.apache.org/foundation/thanks.html">Thanks</a></      li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Apache Software Foundation</h4>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/whoweare.html">Who We Are</a></li      >
+                            <li><a href="http://tomcat.apache.org/heritage.html">Heritage</a></li>
+                            <li><a href="http://www.apache.org">Apache Home</a></li>
+                            <li><a href="http://tomcat.apache.org/resources.html">Resources</a></li      >
+                        </ul>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <p class="copyright">Copyright &copy;1999-2022 Apache Software Foundation.  All Rights       Reserved</p>
+        </div>
+    </body>
+
+</html>
+* Connection #0 to host 10.36.0.1 left intact
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME         READY   STATUS    RESTARTS   AGE   IP          NODE     NOMINATED NODE   READINESS GAT      ES
+myapp-pod    1/1     Running   0          12m   10.36.0.2   node13   <none>           <none>
+webapp-pod   1/1     Running   0          12m   10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ curl -v 10.36.0.1:8080/java-web-app
+*   Trying 10.36.0.1...
+* TCP_NODELAY set
+* Connected to 10.36.0.1 (10.36.0.1) port 8080 (#0)
+> GET /java-web-app HTTP/1.1
+> Host: 10.36.0.1:8080
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 302 Found
+< Server: Apache-Coyote/1.1
+< Location: http://10.36.0.1:8080/java-web-app/
+< Transfer-Encoding: chunked
+< Date: Thu, 03 Feb 2022 04:55:28 GMT
+<
+* Connection #0 to host 10.36.0.1 left intact
+ubuntu@master:~/manifests$ curl -v 10.36.0.2:8080/hello
+*   Trying 10.36.0.2...
+* TCP_NODELAY set
+* connect to 10.36.0.2 port 8080 failed: Connection refused
+* Failed to connect to 10.36.0.2 port 8080: Connection refused
+* Closing connection 0
+curl: (7) Failed to connect to 10.36.0.2 port 8080: Connection refused
+ubuntu@master:~/manifests$ curl -v 10.36.0.2:80/hello
+*   Trying 10.36.0.2...
+* TCP_NODELAY set
+* Connected to 10.36.0.2 (10.36.0.2) port 80 (#0)
+> GET /hello HTTP/1.1
+> Host: 10.36.0.2
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Server: nginx/1.8.0
+< Date: Thu, 03 Feb 2022 04:58:19 GMT
+< Content-Type: text/html; charset=UTF-8
+< Transfer-Encoding: chunked
+< Connection: keep-alive
+< X-Powered-By: PHP/5.6.14
+<
+<html>
+<head>
+        <title>Hello world!</title>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type      ='text/css'>
+        <style>
+        body {
+                background-color: white;
+                text-align: center;
+                padding: 50px;
+                font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+        }
+
+        #logo {
+                margin-bottom: 40px;
+        }
+        </style>
+</head>
+<body>
+        <img id="logo" src="logo.png" />
+        <h1>Hello world!</h1>
+        <h3>My hostname is myapp-pod</h3>                       <h3>Links found</h3>
+                                        <b>KUBERNETES</b> listening in 443 available at tcp://10.96      .0.1:443<br />
+                                </body>
+</html>
+* Connection #0 to host 10.36.0.2 left intact
+ubuntu@master:~/manifests$ curl -v 10.36.0.1:8080/java-web-app
+*   Trying 10.36.0.1...
+* TCP_NODELAY set
+* Connected to 10.36.0.1 (10.36.0.1) port 8080 (#0)
+> GET /java-web-app HTTP/1.1
+> Host: 10.36.0.1:8080
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 302 Found
+< Server: Apache-Coyote/1.1
+< Location: http://10.36.0.1:8080/java-web-app/
+< Transfer-Encoding: chunked
+< Date: Thu, 03 Feb 2022 04:58:30 GMT
+<
+* Connection #0 to host 10.36.0.1 left intact
+ubuntu@master:~/manifests$ curl -v 10.36.0.2:80/hello
+*   Trying 10.36.0.2...
+* TCP_NODELAY set
+* Connected to 10.36.0.2 (10.36.0.2) port 80 (#0)
+> GET /hello HTTP/1.1
+> Host: 10.36.0.2
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Server: nginx/1.8.0
+< Date: Thu, 03 Feb 2022 04:58:38 GMT
+< Content-Type: text/html; charset=UTF-8
+< Transfer-Encoding: chunked
+< Connection: keep-alive
+< X-Powered-By: PHP/5.6.14
+<
+<html>
+<head>
+        <title>Hello world!</title>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type      ='text/css'>
+        <style>
+        body {
+                background-color: white;
+                text-align: center;
+                padding: 50px;
+                font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+        }
+
+        #logo {
+                margin-bottom: 40px;
+        }
+        </style>
+</head>
+<body>
+        <img id="logo" src="logo.png" />
+        <h1>Hello world!</h1>
+        <h3>My hostname is myapp-pod</h3>                       <h3>Links found</h3>
+                                        <b>KUBERNETES</b> listening in 443 available at tcp://10.96      .0.1:443<br />
+                                </body>
+</html>
+* Connection #0 to host 10.36.0.2 left intact
+ubuntu@master:~/manifests$ curl -v 10.36.0.1:8080
+* Rebuilt URL to: 10.36.0.1:8080/
+*   Trying 10.36.0.1...
+* TCP_NODELAY set
+* Connected to 10.36.0.1 (10.36.0.1) port 8080 (#0)
+> GET / HTTP/1.1
+> Host: 10.36.0.1:8080
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Server: Apache-Coyote/1.1
+< Content-Type: text/html;charset=UTF-8
+< Transfer-Encoding: chunked
+< Date: Thu, 03 Feb 2022 05:18:00 GMT
+<
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Apache Tomcat/8.0.20</title>
+        <link href="favicon.ico" rel="icon" type="image/x-icon" />
+        <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link href="tomcat.css" rel="stylesheet" type="text/css" />
+    </head>
+
+    <body>
+        <div id="wrapper">
+            <div id="navigation" class="curved container">
+                <span id="nav-home"><a href="http://tomcat.apache.org/">Home</a></span>
+                <span id="nav-hosts"><a href="/docs/">Documentation</a></span>
+                <span id="nav-config"><a href="/docs/config/">Configuration</a></span>
+                <span id="nav-examples"><a href="/examples/">Examples</a></span>
+                <span id="nav-wiki"><a href="http://wiki.apache.org/tomcat/FrontPage">Wiki</a></spa      n>
+                <span id="nav-lists"><a href="http://tomcat.apache.org/lists.html">Mailing Lists</a      ></span>
+                <span id="nav-help"><a href="http://tomcat.apache.org/findhelp.html">Find Help</a><      /span>
+                <br class="separator" />
+            </div>
+            <div id="asf-box">
+                <h1>Apache Tomcat/8.0.20</h1>
+            </div>
+            <div id="upper" class="curved container">
+                <div id="congrats" class="curved container">
+                    <h2>If you're seeing this, you've successfully installed Tomcat. Congratulation      s!</h2>
+                </div>
+                <div id="notice">
+                    <img src="tomcat.png" alt="[tomcat logo]" />
+                    <div id="tasks">
+                        <h3>Recommended Reading:</h3>
+                        <h4><a href="/docs/security-howto.html">Security Considerations HOW-TO</a><      /h4>
+                        <h4><a href="/docs/manager-howto.html">Manager Application HOW-TO</a></h4>
+                        <h4><a href="/docs/cluster-howto.html">Clustering/Session Replication HOW-T      O</a></h4>
+                    </div>
+                </div>
+                <div id="actions">
+                    <div class="button">
+                        <a class="container shadow" href="/manager/status"><span>Server Status</spa      n></a>
+                    </div>
+                    <div class="button">
+                        <a class="container shadow" href="/manager/html"><span>Manager App</span></      a>
+                    </div>
+                    <div class="button">
+                        <a class="container shadow" href="/host-manager/html"><span>Host Manager</s      pan></a>
+                    </div>
+                </div>
+                <!--
+                <br class="separator" />
+                -->
+                <br class="separator" />
+            </div>
+            <div id="middle" class="curved container">
+                <h3>Developer Quick Start</h3>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/docs/setup.html">Tomcat Setup</a></p>
+                        <p><a href="/docs/appdev/">First Web Application</a></p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/docs/realm-howto.html">Realms &amp; AAA</a></p>
+                        <p><a href="/docs/jndi-datasource-examples-howto.html">JDBC DataSources</a>      </p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/examples/">Examples</a></p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="http://wiki.apache.org/tomcat/Specifications">Servlet Specifica      tions</a></p>
+                        <p><a href="http://wiki.apache.org/tomcat/TomcatVersions">Tomcat Versions</      a></p>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <div id="lower">
+                <div id="low-manage" class="">
+                    <div class="curved container">
+                        <h3>Managing Tomcat</h3>
+                        <p>For security, access to the <a href="/manager/html">manager webapp</a> i      s restricted.
+                        Users are defined in:</p>
+                        <pre>$CATALINA_HOME/conf/tomcat-users.xml</pre>
+                        <p>In Tomcat 8.0 access to the manager application is split between
+                           different users. &nbsp; <a href="/docs/manager-howto.html">Read more...<      /a></p>
+                        <br />
+                        <h4><a href="/docs/RELEASE-NOTES.txt">Release Notes</a></h4>
+                        <h4><a href="/docs/changelog.html">Changelog</a></h4>
+                        <h4><a href="http://tomcat.apache.org/migration.html">Migration Guide</a></      h4>
+                        <h4><a href="http://tomcat.apache.org/security.html">Security Notices</a></      h4>
+                    </div>
+                </div>
+                <div id="low-docs" class="">
+                    <div class="curved container">
+                        <h3>Documentation</h3>
+                        <h4><a href="/docs/">Tomcat 8.0 Documentation</a></h4>
+                        <h4><a href="/docs/config/">Tomcat 8.0 Configuration</a></h4>
+                        <h4><a href="http://wiki.apache.org/tomcat/FrontPage">Tomcat Wiki</a></h4>
+                        <p>Find additional important configuration information in:</p>
+                        <pre>$CATALINA_HOME/RUNNING.txt</pre>
+                        <p>Developers may be interested in:</p>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/bugreport.html">Tomcat 8.0 Bug Da      tabase</a></li>
+                            <li><a href="/docs/api/index.html">Tomcat 8.0 JavaDocs</a></li>
+                            <li><a href="http://svn.apache.org/repos/asf/tomcat/tc8.0.x/">Tomcat 8.      0 SVN Repository</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="low-help" class="">
+                    <div class="curved container">
+                        <h3>Getting Help</h3>
+                        <h4><a href="http://tomcat.apache.org/faq/">FAQ</a> and <a href="http://tom      cat.apache.org/lists.html">Mailing Lists</a></h4>
+                        <p>The following mailing lists are available:</p>
+                        <ul>
+                            <li id="list-announce"><strong><a href="http://tomcat.apache.org/lists.      html#tomcat-announce">tomcat-announce</a><br />
+                                Important announcements, releases, security vulnerability notificat      ions. (Low volume).</strong>
+                            </li>
+                            <li><a href="http://tomcat.apache.org/lists.html#tomcat-users">tomcat-u      sers</a><br />
+                                User support and discussion
+                            </li>
+                            <li><a href="http://tomcat.apache.org/lists.html#taglibs-user">taglibs-      user</a><br />
+                                User support and discussion for <a href="http://tomcat.apache.org/t      aglibs/">Apache Taglibs</a>
+                            </li>
+                            <li><a href="http://tomcat.apache.org/lists.html#tomcat-dev">tomcat-dev      </a><br />
+                                Development mailing list, including commit messages
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <div id="footer" class="curved container">
+                <div class="col20">
+                    <div class="container">
+                        <h4>Other Downloads</h4>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/download-connectors.cgi">Tomcat C      onnectors</a></li>
+                            <li><a href="http://tomcat.apache.org/download-native.cgi">Tomcat Nativ      e</a></li>
+                            <li><a href="http://tomcat.apache.org/taglibs/">Taglibs</a></li>
+                            <li><a href="/docs/deployer-howto.html">Deployer</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Other Documentation</h4>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/connectors-doc/">Tomcat Connector      s</a></li>
+                            <li><a href="http://tomcat.apache.org/connectors-doc/">mod_jk Documenta      tion</a></li>
+                            <li><a href="http://tomcat.apache.org/native-doc/">Tomcat Native</a></l      i>
+                            <li><a href="/docs/deployer-howto.html">Deployer</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Get Involved</h4>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/getinvolved.html">Overview</a></l      i>
+                            <li><a href="http://tomcat.apache.org/svn.html">SVN Repositories</a></l      i>
+                            <li><a href="http://tomcat.apache.org/lists.html">Mailing Lists</a></li      >
+                            <li><a href="http://wiki.apache.org/tomcat/FrontPage">Wiki</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Miscellaneous</h4>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/contact.html">Contact</a></li>
+                            <li><a href="http://tomcat.apache.org/legal.html">Legal</a></li>
+                            <li><a href="http://www.apache.org/foundation/sponsorship.html">Sponsor      ship</a></li>
+                            <li><a href="http://www.apache.org/foundation/thanks.html">Thanks</a></      li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Apache Software Foundation</h4>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/whoweare.html">Who We Are</a></li      >
+                            <li><a href="http://tomcat.apache.org/heritage.html">Heritage</a></li>
+                            <li><a href="http://www.apache.org">Apache Home</a></li>
+                            <li><a href="http://tomcat.apache.org/resources.html">Resources</a></li      >
+                        </ul>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <p class="copyright">Copyright &copy;1999-2022 Apache Software Foundation.  All Rights       Reserved</p>
+        </div>
+    </body>
+
+</html>
+* Connection #0 to host 10.36.0.1 left intact
+ubuntu@master:~/manifests$ curl -v 10.36.0.2:80
+* Rebuilt URL to: 10.36.0.2:80/
+*   Trying 10.36.0.2...
+* TCP_NODELAY set
+* Connected to 10.36.0.2 (10.36.0.2) port 80 (#0)
+> GET / HTTP/1.1
+> Host: 10.36.0.2
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Server: nginx/1.8.0
+< Date: Thu, 03 Feb 2022 05:18:07 GMT
+< Content-Type: text/html; charset=UTF-8
+< Transfer-Encoding: chunked
+< Connection: keep-alive
+< X-Powered-By: PHP/5.6.14
+<
+<html>
+<head>
+        <title>Hello world!</title>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type      ='text/css'>
+        <style>
+        body {
+                background-color: white;
+                text-align: center;
+                padding: 50px;
+                font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+        }
+
+        #logo {
+                margin-bottom: 40px;
+        }
+        </style>
+</head>
+<body>
+        <img id="logo" src="logo.png" />
+        <h1>Hello world!</h1>
+        <h3>My hostname is myapp-pod</h3>                       <h3>Links found</h3>
+                                        <b>KUBERNETES</b> listening in 443 available at tcp://10.96      .0.1:443<br />
+                                </body>
+</html>
+* Connection #0 to host 10.36.0.2 left intact
+ubuntu@master:~/manifests$ kubectl get all
+NAME             READY   STATUS    RESTARTS   AGE
+pod/myapp-pod    1/1     Running   0          39m
+pod/webapp-pod   1/1     Running   0          39m
+ubuntu@master:~/manifests$ kubectl get all -n default
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   157m
+ubuntu@master:~/manifests$ ls
+pod.yml
+ubuntu@master:~/manifests$ cat pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp-pod
+  namespace: dev
+  labels:
+    app: webapp
+spec:
+  containers:
+  - name: webapp-c
+    image: mylandmarktech/java-web-app
+    ports:
+    - containerPort: 8080
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+  namespace: dev
+  labels:
+    app: myapp
+spec:
+  containers:
+  - name: myapp-c
+    image: mylandmarktech/hello
+    ports:
+    - containerPort: 80
+
+
+
+ubuntu@master:~/manifests$ vi pod1.yml
+ubuntu@master:~/manifests$ kubectl get pod
+NAME         READY   STATUS    RESTARTS   AGE
+myapp-pod    1/1     Running   0          43m
+webapp-pod   1/1     Running   0          43m
+ubuntu@master:~/manifests$ kubectl delete pod webapp-pod
+pod "webapp-pod" deleted
+ubuntu@master:~/manifests$ kubectl get pod
+NAME        READY   STATUS    RESTARTS   AGE
+myapp-pod   1/1     Running   0          43m
+ubuntu@master:~/manifests$ kubectl apply -f pod1.yml -v=7
+I0203 05:26:30.306727   28771 loader.go:372] Config loaded from file:  /home/ubuntu/.kube/config
+I0203 05:26:30.307707   28771 round_trippers.go:463] GET https://172.31.31.85:6443/openapi/v2?timeo      ut=32s
+I0203 05:26:30.307741   28771 round_trippers.go:469] Request Headers:
+I0203 05:26:30.307756   28771 round_trippers.go:473]     Accept: application/com.github.proto-opena      pi.spec.v2@v1.0+protobuf
+I0203 05:26:30.307770   28771 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 05:26:30.331993   28771 round_trippers.go:574] Response Status: 200 OK in 24 milliseconds
+I0203 05:26:30.434029   28771 round_trippers.go:463] GET https://172.31.31.85:6443/api/v1/namespace      s/dev/pods/webapp-pod
+I0203 05:26:30.434063   28771 round_trippers.go:469] Request Headers:
+I0203 05:26:30.434087   28771 round_trippers.go:473]     Accept: application/json
+I0203 05:26:30.434106   28771 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 05:26:30.436865   28771 round_trippers.go:574] Response Status: 404 Not Found in 2 millisecon      ds
+I0203 05:26:30.437203   28771 round_trippers.go:463] GET https://172.31.31.85:6443/api/v1/namespace      s/dev
+I0203 05:26:30.437227   28771 round_trippers.go:469] Request Headers:
+I0203 05:26:30.437238   28771 round_trippers.go:473]     Accept: application/json
+I0203 05:26:30.437253   28771 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 05:26:30.439517   28771 round_trippers.go:574] Response Status: 200 OK in 2 milliseconds
+I0203 05:26:30.439928   28771 round_trippers.go:463] POST https://172.31.31.85:6443/api/v1/namespac      es/dev/pods?fieldManager=kubectl-client-side-apply
+I0203 05:26:30.439968   28771 round_trippers.go:469] Request Headers:
+I0203 05:26:30.440088   28771 round_trippers.go:473]     Accept: application/json
+I0203 05:26:30.440111   28771 round_trippers.go:473]     Content-Type: application/json
+I0203 05:26:30.440209   28771 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 05:26:30.451992   28771 round_trippers.go:574] Response Status: 201 Created in 11 millisecond      s
+pod/webapp-pod created
+I0203 05:26:30.452594   28771 apply.go:447] Running apply post-processor function
+ubuntu@master:~/manifests$ ls
+pod.yml  pod1.yml
+ubuntu@master:~/manifests$ kubectl get pod
+NAME         READY   STATUS    RESTARTS   AGE
+myapp-pod    1/1     Running   0          44m
+webapp-pod   1/1     Running   0          8s
+ubuntu@master:~/manifests$ kubectl describe pod webapp-pod
+Name:         webapp-pod
+Namespace:    dev
+Priority:     0
+Node:         node13/172.31.6.54
+Start Time:   Thu, 03 Feb 2022 05:26:30 +0000
+Labels:       app=webapp
+Annotations:  <none>
+Status:       Running
+IP:           10.36.0.1
+IPs:
+  IP:  10.36.0.1
+Containers:
+  webapp-c:
+    Container ID:   containerd://e1bc18f8ffd622926857510d9b35afbc641977682cb15d7174a6bddc1c6c0517
+    Image:          ismailaafuwape/maven-web-app
+    Image ID:       docker.io/ismailaafuwape/maven-web-app@sha256:d9d77813330a38fdef91083f61697d488      d6c5c177a1dafd88ac447bf4bfc94b5
+    Port:           8080/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Thu, 03 Feb 2022 05:26:32 +0000
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-d9b2v (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  kube-api-access-d9b2v:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  30s   default-scheduler  Successfully assigned dev/webapp-pod to node13
+  Normal  Pulling    29s   kubelet            Pulling image "ismailaafuwape/maven-web-app"
+  Normal  Pulled     28s   kubelet            Successfully pulled image "ismailaafuwape/maven-web-a      pp" in 1.547094004s
+  Normal  Created    28s   kubelet            Created container webapp-c
+  Normal  Started    28s   kubelet            Started container webapp-c
+ubuntu@master:~/manifests$ kubectl get pod
+NAME         READY   STATUS    RESTARTS   AGE
+myapp-pod    1/1     Running   0          44m
+webapp-pod   1/1     Running   0          36s
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME         READY   STATUS    RESTARTS   AGE   IP          NODE     NOMINATED NODE   READINESS GAT      ES
+myapp-pod    1/1     Running   0          44m   10.36.0.2   node13   <none>           <none>
+webapp-pod   1/1     Running   0          45s   10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ curl -v 10.36.0.1:8080/maven-web-app
+*   Trying 10.36.0.1...
+* TCP_NODELAY set
+* Connected to 10.36.0.1 (10.36.0.1) port 8080 (#0)
+> GET /maven-web-app HTTP/1.1
+> Host: 10.36.0.1:8080
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 302 Found
+< Server: Apache-Coyote/1.1
+< Location: http://10.36.0.1:8080/maven-web-app/
+< Transfer-Encoding: chunked
+< Date: Thu, 03 Feb 2022 05:27:42 GMT
+<
+* Connection #0 to host 10.36.0.1 left intact
+ubuntu@master:~/manifests$ kubectl get pod
+NAME         READY   STATUS    RESTARTS   AGE
+myapp-pod    1/1     Running   0          48m
+webapp-pod   1/1     Running   0          4m3s
+ubuntu@master:~/manifests$ kubectl delete pod webapp-pod
+pod "webapp-pod" deleted
+ubuntu@master:~/manifests$ kubectl get pod
+NAME        READY   STATUS    RESTARTS   AGE
+myapp-pod   1/1     Running   0          48m
+ubuntu@master:~/manifests$ ls
+pod.yml  pod1.yml
+ubuntu@master:~/manifests$ cp pod.yml svc.yml
+ubuntu@master:~/manifests$ ls
+pod.yml  pod1.yml  svc.yml
+ubuntu@master:~/manifests$ kubectl get all
+NAME            READY   STATUS    RESTARTS   AGE
+pod/myapp-pod   1/1     Running   0          49m
+ubuntu@master:~/manifests$ kubectl get all -n default
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   168m
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME        READY   STATUS    RESTARTS   AGE   IP          NODE     NOMINATED NODE   READINESS GATE      S
+myapp-pod   1/1     Running   0          72m   10.36.0.2   node13   <none>           <none>
+ubuntu@master:~/manifests$ vi svc.yml
+ubuntu@master:~/manifests$ vi svc.yml
+ubuntu@master:~/manifests$ vi ss.yml
+ubuntu@master:~/manifests$ cat ss.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: websvc
+  namespace: dev
+spec:
+  type: ClusterIp
+  selector:
+    app: webapp
+  ports:
+   - targetPort: 8080
+     port: 80
+
+ubuntu@master:~/manifests$ kubectl get ALL
+error: the server doesn't have a resource type "ALL"
+ubuntu@master:~/manifests$ kubectl get all
+NAME            READY   STATUS    RESTARTS   AGE
+pod/myapp-pod   1/1     Running   0          120m
+ubuntu@master:~/manifests$ vi pod.yml
+ubuntu@master:~/manifests$ vi pod.yml
+ubuntu@master:~/manifests$ kubectl apply -f pod.yml -v=7
+I0203 06:45:06.375439   10849 loader.go:372] Config loaded from file:  /home/ubuntu/.kube/config
+I0203 06:45:06.376233   10849 round_trippers.go:463] GET https://172.31.31.85:6443/openapi/v2?timeo      ut=32s
+I0203 06:45:06.376252   10849 round_trippers.go:469] Request Headers:
+I0203 06:45:06.376274   10849 round_trippers.go:473]     Accept: application/com.github.proto-opena      pi.spec.v2@v1.0+protobuf
+I0203 06:45:06.376293   10849 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:45:06.402268   10849 round_trippers.go:574] Response Status: 200 OK in 25 milliseconds
+I0203 06:45:06.504594   10849 round_trippers.go:463] GET https://172.31.31.85:6443/api/v1/namespace      s/dev/services/websvc
+I0203 06:45:06.504622   10849 round_trippers.go:469] Request Headers:
+I0203 06:45:06.504636   10849 round_trippers.go:473]     Accept: application/json
+I0203 06:45:06.504649   10849 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:45:06.506819   10849 round_trippers.go:574] Response Status: 404 Not Found in 2 millisecon      ds
+I0203 06:45:06.507122   10849 round_trippers.go:463] GET https://172.31.31.85:6443/api/v1/namespace      s/dev
+I0203 06:45:06.507140   10849 round_trippers.go:469] Request Headers:
+I0203 06:45:06.507153   10849 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:45:06.507167   10849 round_trippers.go:473]     Accept: application/json
+I0203 06:45:06.508696   10849 round_trippers.go:574] Response Status: 200 OK in 1 milliseconds
+I0203 06:45:06.508925   10849 round_trippers.go:463] POST https://172.31.31.85:6443/api/v1/namespac      es/dev/services?fieldManager=kubectl-client-side-apply
+I0203 06:45:06.508944   10849 round_trippers.go:469] Request Headers:
+I0203 06:45:06.508959   10849 round_trippers.go:473]     Content-Type: application/json
+I0203 06:45:06.508972   10849 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:45:06.508984   10849 round_trippers.go:473]     Accept: application/json
+I0203 06:45:06.518941   10849 round_trippers.go:574] Response Status: 422 Unprocessable Entity in 9       milliseconds
+I0203 06:45:06.519290   10849 round_trippers.go:463] GET https://172.31.31.85:6443/api/v1/namespace      s/dev/pods/webapp-pod
+I0203 06:45:06.519308   10849 round_trippers.go:469] Request Headers:
+I0203 06:45:06.519414   10849 round_trippers.go:473]     Accept: application/json
+I0203 06:45:06.519491   10849 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:45:06.521241   10849 round_trippers.go:574] Response Status: 404 Not Found in 1 millisecon      ds
+I0203 06:45:06.521380   10849 round_trippers.go:463] GET https://172.31.31.85:6443/api/v1/namespace      s/dev
+I0203 06:45:06.521401   10849 round_trippers.go:469] Request Headers:
+I0203 06:45:06.521415   10849 round_trippers.go:473]     Accept: application/json
+I0203 06:45:06.521450   10849 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:45:06.523049   10849 round_trippers.go:574] Response Status: 200 OK in 1 milliseconds
+I0203 06:45:06.523340   10849 round_trippers.go:463] POST https://172.31.31.85:6443/api/v1/namespac      es/dev/pods?fieldManager=kubectl-client-side-apply
+I0203 06:45:06.523359   10849 round_trippers.go:469] Request Headers:
+I0203 06:45:06.523378   10849 round_trippers.go:473]     Accept: application/json
+I0203 06:45:06.523392   10849 round_trippers.go:473]     Content-Type: application/json
+I0203 06:45:06.523403   10849 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:45:06.529300   10849 round_trippers.go:574] Response Status: 201 Created in 5 milliseconds
+pod/webapp-pod created
+I0203 06:45:06.529592   10849 round_trippers.go:463] GET https://172.31.31.85:6443/api/v1/namespace      s/dev/pods/myapp-pod
+I0203 06:45:06.529608   10849 round_trippers.go:469] Request Headers:
+I0203 06:45:06.529623   10849 round_trippers.go:473]     Accept: application/json
+I0203 06:45:06.529635   10849 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:45:06.533363   10849 round_trippers.go:574] Response Status: 200 OK in 3 milliseconds
+pod/myapp-pod unchanged
+F0203 06:45:06.534072   10849 helpers.go:118] The Service "websvc" is invalid: spec.type: Unsupport      ed value: "ClusterIp": supported values: "ClusterIP", "ExternalName", "LoadBalancer", "NodePort"
+goroutine 1 [running]:
+k8s.io/kubernetes/vendor/k8s.io/klog/v2.stacks(0x1)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      klog/v2/klog.go:1038 +0x8a
+k8s.io/kubernetes/vendor/k8s.io/klog/v2.(*loggingT).output(0x307e000, 0x3, 0x0, 0xc000192150, 0x2,       {0x25f1467, 0x10}, 0x307eee0, 0x0)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      klog/v2/klog.go:987 +0x5fd
+k8s.io/kubernetes/vendor/k8s.io/klog/v2.(*loggingT).printDepth(0xc001604780, 0x96, 0x0, {0x0, 0x0},       0x1fecc00, {0xc001a5bde0, 0x1, 0x1})
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      klog/v2/klog.go:735 +0x1ae
+k8s.io/kubernetes/vendor/k8s.io/klog/v2.FatalDepth(...)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      klog/v2/klog.go:1518
+k8s.io/kubernetes/vendor/k8s.io/kubectl/pkg/cmd/util.fatal({0xc001604780, 0x96}, 0x1fecc00)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      kubectl/pkg/cmd/util/helpers.go:96 +0xc5
+k8s.io/kubernetes/vendor/k8s.io/kubectl/pkg/cmd/util.checkErr({0x1fe9f80, 0xc00197b4a0}, 0x1e781d0)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      kubectl/pkg/cmd/util/helpers.go:160 +0x2c8
+k8s.io/kubernetes/vendor/k8s.io/kubectl/pkg/cmd/util.CheckErr(...)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      kubectl/pkg/cmd/util/helpers.go:118
+k8s.io/kubernetes/vendor/k8s.io/kubectl/pkg/cmd/apply.NewCmdApply.func1(0xc0006d6280, {0xc0007b6030      , 0x0, 0x3})
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      kubectl/pkg/cmd/apply/apply.go:190 +0xb1
+k8s.io/kubernetes/vendor/github.com/spf13/cobra.(*Command).execute(0xc0006d6280, {0xc0007b6000, 0x3      , 0x3})
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/github.      com/spf13/cobra/command.go:860 +0x5f8
+k8s.io/kubernetes/vendor/github.com/spf13/cobra.(*Command).ExecuteC(0xc0000a7900)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/github.      com/spf13/cobra/command.go:974 +0x3bc
+k8s.io/kubernetes/vendor/github.com/spf13/cobra.(*Command).Execute(...)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/github.      com/spf13/cobra/command.go:902
+k8s.io/kubernetes/vendor/k8s.io/component-base/cli.run(0xc0000a7900)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      component-base/cli/run.go:146 +0x325
+k8s.io/kubernetes/vendor/k8s.io/component-base/cli.RunNoErrOutput(...)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      component-base/cli/run.go:84
+main.main()
+        _output/dockerized/go/src/k8s.io/kubernetes/cmd/kubectl/kubectl.go:30 +0x1e
+
+goroutine 6 [chan receive]:
+k8s.io/kubernetes/vendor/k8s.io/klog/v2.(*loggingT).flushDaemon(0x0)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      klog/v2/klog.go:1181 +0x6a
+created by k8s.io/kubernetes/vendor/k8s.io/klog/v2.init.0
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      klog/v2/klog.go:420 +0xfb
+
+goroutine 18 [select]:
+k8s.io/kubernetes/vendor/k8s.io/apimachinery/pkg/util/wait.BackoffUntil(0x0, {0x1fea280, 0xc0003aa0      90}, 0x1, 0xc00007e360)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      apimachinery/pkg/util/wait/wait.go:167 +0x13b
+k8s.io/kubernetes/vendor/k8s.io/apimachinery/pkg/util/wait.JitterUntil(0x0, 0x12a05f200, 0x0, 0x0,       0x0)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      apimachinery/pkg/util/wait/wait.go:133 +0x89
+k8s.io/kubernetes/vendor/k8s.io/apimachinery/pkg/util/wait.Until(...)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      apimachinery/pkg/util/wait/wait.go:90
+k8s.io/kubernetes/vendor/k8s.io/apimachinery/pkg/util/wait.Forever(0x0, 0x0)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      apimachinery/pkg/util/wait/wait.go:81 +0x28
+created by k8s.io/kubernetes/vendor/k8s.io/component-base/logs.InitLogs
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      component-base/logs/logs.go:179 +0x85
+
+goroutine 13 [IO wait]:
+internal/poll.runtime_pollWait(0x7fafededc6d8, 0x72)
+        /usr/local/go/src/runtime/netpoll.go:234 +0x89
+internal/poll.(*pollDesc).wait(0xc00075a180, 0xc0000f9000, 0x0)
+        /usr/local/go/src/internal/poll/fd_poll_runtime.go:84 +0x32
+internal/poll.(*pollDesc).waitRead(...)
+        /usr/local/go/src/internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc00075a180, {0xc0000f9000, 0x1534, 0x1534})
+        /usr/local/go/src/internal/poll/fd_unix.go:167 +0x25a
+net.(*netFD).Read(0xc00075a180, {0xc0000f9000, 0xc0000f9005, 0x1a})
+        /usr/local/go/src/net/fd_posix.go:56 +0x29
+net.(*conn).Read(0xc00045a008, {0xc0000f9000, 0x6, 0xc0000237f0})
+        /usr/local/go/src/net/net.go:183 +0x45
+crypto/tls.(*atLeastReader).Read(0xc001a38660, {0xc0000f9000, 0x0, 0x409e2d})
+        /usr/local/go/src/crypto/tls/conn.go:777 +0x3d
+bytes.(*Buffer).ReadFrom(0xc00002c5f8, {0x1fe80c0, 0xc001a38660})
+        /usr/local/go/src/bytes/buffer.go:204 +0x98
+crypto/tls.(*Conn).readFromUntil(0xc00002c380, {0x1febaa0, 0xc00045a008}, 0x1534)
+        /usr/local/go/src/crypto/tls/conn.go:799 +0xe5
+crypto/tls.(*Conn).readRecordOrCCS(0xc00002c380, 0x0)
+        /usr/local/go/src/crypto/tls/conn.go:606 +0x112
+crypto/tls.(*Conn).readRecord(...)
+        /usr/local/go/src/crypto/tls/conn.go:574
+crypto/tls.(*Conn).Read(0xc00002c380, {0xc000188000, 0x1000, 0x8d9b00})
+        /usr/local/go/src/crypto/tls/conn.go:1277 +0x16f
+bufio.(*Reader).Read(0xc0007b1080, {0xc00019c820, 0x9, 0x8e7ac2})
+        /usr/local/go/src/bufio/bufio.go:227 +0x1b4
+io.ReadAtLeast({0x1fe7ec0, 0xc0007b1080}, {0xc00019c820, 0x9, 0x9}, 0x9)
+        /usr/local/go/src/io/io.go:328 +0x9a
+io.ReadFull(...)
+        /usr/local/go/src/io/io.go:347
+k8s.io/kubernetes/vendor/golang.org/x/net/http2.readFrameHeader({0xc00019c820, 0x9, 0xc001a44480},       {0x1fe7ec0, 0xc0007b1080})
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/golang.      org/x/net/http2/frame.go:237 +0x6e
+k8s.io/kubernetes/vendor/golang.org/x/net/http2.(*Framer).ReadFrame(0xc00019c7e0)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/golang.      org/x/net/http2/frame.go:498 +0x95
+k8s.io/kubernetes/vendor/golang.org/x/net/http2.(*clientConnReadLoop).run(0xc000023f98)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/golang.      org/x/net/http2/transport.go:2101 +0x130
+k8s.io/kubernetes/vendor/golang.org/x/net/http2.(*ClientConn).readLoop(0xc000462600)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/golang.      org/x/net/http2/transport.go:1997 +0x6f
+created by k8s.io/kubernetes/vendor/golang.org/x/net/http2.(*Transport).newClientConn
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/golang.      org/x/net/http2/transport.go:725 +0xac5
+ubuntu@master:~/manifests$ kubectl get all
+NAME             READY   STATUS    RESTARTS   AGE
+pod/myapp-pod    1/1     Running   0          122m
+pod/webapp-pod   1/1     Running   0          6s
+ubuntu@master:~/manifests$ kubectl get svc websvc
+Error from server (NotFound): services "websvc" not found
+ubuntu@master:~/manifests$ vi pod.yml
+ubuntu@master:~/manifests$ kubectl get pod websvc
+Error from server (NotFound): pods "websvc" not found
+ubuntu@master:~/manifests$ kubectl get all
+NAME             READY   STATUS    RESTARTS   AGE
+pod/myapp-pod    1/1     Running   0          128m
+pod/webapp-pod   1/1     Running   0          5m40s
+ubuntu@master:~/manifests$ kubectl get pod
+NAME         READY   STATUS    RESTARTS   AGE
+myapp-pod    1/1     Running   0          128m
+webapp-pod   1/1     Running   0          5m45s
+ubuntu@master:~/manifests$ kubectl get nodes
+NAME     STATUS   ROLES                  AGE     VERSION
+master   Ready    control-plane,master   4h6m    v1.23.3
+node1    Ready    <none>                 3h35m   v1.23.3
+node13   Ready    <none>                 3h12m   v1.23.3
+ubuntu@master:~/manifests$ vi pod.yml
+ubuntu@master:~/manifests$ kubectl apply -f pod.yml -v=7
+I0203 06:53:44.431426   11027 loader.go:372] Config loaded from file:  /home/ubuntu/.kube/config
+I0203 06:53:44.432129   11027 round_trippers.go:463] GET https://172.31.31.85:6443/openapi/v2?timeo      ut=32s
+I0203 06:53:44.432150   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.432166   11027 round_trippers.go:473]     Accept: application/com.github.proto-opena      pi.spec.v2@v1.0+protobuf
+I0203 06:53:44.432180   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.465737   11027 round_trippers.go:574] Response Status: 200 OK in 33 milliseconds
+I0203 06:53:44.550171   11027 round_trippers.go:463] GET https://172.31.31.85:6443/api?timeout=32s
+I0203 06:53:44.550358   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.550479   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.550570   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.551666   11027 round_trippers.go:574] Response Status: 200 OK in 1 milliseconds
+I0203 06:53:44.557014   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis?timeout=32s
+I0203 06:53:44.557034   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.557044   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.557055   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.558058   11027 round_trippers.go:574] Response Status: 200 OK in 0 milliseconds
+I0203 06:53:44.561851   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/autoscaling      /v1?timeout=32s
+I0203 06:53:44.561892   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.561909   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.561924   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.561862   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/flowcontrol      .apiserver.k8s.io/v1beta1?timeout=32s
+I0203 06:53:44.561984   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.562091   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.562109   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.562306   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/autoscaling      /v2beta1?timeout=32s
+I0203 06:53:44.562321   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.562330   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.562337   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.562476   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/autoscaling      /v2beta2?timeout=32s
+I0203 06:53:44.562484   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.562492   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.562499   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.562620   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/batch/v1?ti      meout=32s
+I0203 06:53:44.562628   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.562635   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.562644   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.562754   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/batch/v1bet      a1?timeout=32s
+I0203 06:53:44.562762   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.562770   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.562777   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.562881   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/certificate      s.k8s.io/v1?timeout=32s
+I0203 06:53:44.562889   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.562897   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.562904   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.563214   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/networking.      k8s.io/v1?timeout=32s
+I0203 06:53:44.563226   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.563233   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.563241   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.563354   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/policy/v1?t      imeout=32s
+I0203 06:53:44.563362   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.563370   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.563377   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.563502   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/policy/v1be      ta1?timeout=32s
+I0203 06:53:44.563512   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.563519   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.563600   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.563735   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/rbac.author      ization.k8s.io/v1?timeout=32s
+I0203 06:53:44.563744   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.563751   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.563760   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.563865   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/storage.k8s      .io/v1?timeout=32s
+I0203 06:53:44.563873   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.563880   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.563887   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.564005   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/storage.k8s      .io/v1beta1?timeout=32s
+I0203 06:53:44.564013   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.564021   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.564028   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.564218   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/admissionre      gistration.k8s.io/v1?timeout=32s
+I0203 06:53:44.564230   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.564239   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.564246   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.564360   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/apiextensio      ns.k8s.io/v1?timeout=32s
+I0203 06:53:44.564368   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.564375   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.564382   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.564484   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/scheduling.      k8s.io/v1?timeout=32s
+I0203 06:53:44.564494   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.564502   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.564509   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.564689   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/coordinatio      n.k8s.io/v1?timeout=32s
+I0203 06:53:44.564707   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.564715   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.564787   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.564986   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/node.k8s.io      /v1?timeout=32s
+I0203 06:53:44.565004   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.565012   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.565019   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.565196   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/node.k8s.io      /v1beta1?timeout=32s
+I0203 06:53:44.565213   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.565273   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.565288   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.565453   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/discovery.k      8s.io/v1?timeout=32s
+I0203 06:53:44.565470   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.565478   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.565545   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.565747   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/discovery.k      8s.io/v1beta1?timeout=32s
+I0203 06:53:44.565764   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.565772   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.565841   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.566044   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/flowcontrol      .apiserver.k8s.io/v1beta2?timeout=32s
+I0203 06:53:44.566061   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.566124   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.566139   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.566373   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/events.k8s.      io/v1beta1?timeout=32s
+I0203 06:53:44.566390   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.566398   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.566405   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.566595   11027 round_trippers.go:463] GET https://172.31.31.85:6443/api/v1?timeout=3      2s
+I0203 06:53:44.566612   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.566676   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.566693   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.566926   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/apiregistra      tion.k8s.io/v1?timeout=32s
+I0203 06:53:44.566944   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.567002   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.567017   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.567187   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/apps/v1?tim      eout=32s
+I0203 06:53:44.567204   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.567268   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.567283   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.567461   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/events.k8s.      io/v1?timeout=32s
+I0203 06:53:44.567479   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.567544   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.567592   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.567804   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/autoscaling      /v2?timeout=32s
+I0203 06:53:44.567824   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.567889   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.567908   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.568123   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/authenticat      ion.k8s.io/v1?timeout=32s
+I0203 06:53:44.568143   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.568210   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.568229   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.568401   11027 round_trippers.go:463] GET https://172.31.31.85:6443/apis/authorizati      on.k8s.io/v1?timeout=32s
+I0203 06:53:44.568419   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.568480   11027 round_trippers.go:473]     Accept: application/json, */*
+I0203 06:53:44.568497   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.569155   11027 round_trippers.go:574] Response Status: 200 OK in 5 milliseconds
+I0203 06:53:44.569267   11027 round_trippers.go:574] Response Status: 200 OK in 6 milliseconds
+I0203 06:53:44.569432   11027 round_trippers.go:574] Response Status: 200 OK in 7 milliseconds
+I0203 06:53:44.569542   11027 round_trippers.go:574] Response Status: 200 OK in 6 milliseconds
+I0203 06:53:44.569649   11027 round_trippers.go:574] Response Status: 200 OK in 6 milliseconds
+I0203 06:53:44.569746   11027 round_trippers.go:574] Response Status: 200 OK in 6 milliseconds
+I0203 06:53:44.569880   11027 round_trippers.go:574] Response Status: 200 OK in 6 milliseconds
+I0203 06:53:44.569963   11027 round_trippers.go:574] Response Status: 200 OK in 7 milliseconds
+I0203 06:53:44.570048   11027 round_trippers.go:574] Response Status: 200 OK in 7 milliseconds
+I0203 06:53:44.570157   11027 round_trippers.go:574] Response Status: 200 OK in 7 milliseconds
+I0203 06:53:44.570510   11027 round_trippers.go:574] Response Status: 200 OK in 5 milliseconds
+I0203 06:53:44.570772   11027 round_trippers.go:574] Response Status: 200 OK in 7 milliseconds
+I0203 06:53:44.571177   11027 round_trippers.go:574] Response Status: 200 OK in 7 milliseconds
+I0203 06:53:44.571545   11027 round_trippers.go:574] Response Status: 200 OK in 6 milliseconds
+I0203 06:53:44.571907   11027 round_trippers.go:574] Response Status: 200 OK in 7 milliseconds
+I0203 06:53:44.572406   11027 round_trippers.go:574] Response Status: 200 OK in 6 milliseconds
+I0203 06:53:44.572789   11027 round_trippers.go:574] Response Status: 200 OK in 8 milliseconds
+I0203 06:53:44.574663   11027 round_trippers.go:574] Response Status: 200 OK in 8 milliseconds
+I0203 06:53:44.574706   11027 round_trippers.go:574] Response Status: 200 OK in 8 milliseconds
+I0203 06:53:44.574749   11027 round_trippers.go:574] Response Status: 200 OK in 8 milliseconds
+I0203 06:53:44.578736   11027 round_trippers.go:574] Response Status: 200 OK in 14 milliseconds
+I0203 06:53:44.578788   11027 round_trippers.go:574] Response Status: 200 OK in 13 milliseconds
+I0203 06:53:44.578920   11027 round_trippers.go:574] Response Status: 200 OK in 14 milliseconds
+I0203 06:53:44.578970   11027 round_trippers.go:574] Response Status: 200 OK in 11 milliseconds
+I0203 06:53:44.579000   11027 round_trippers.go:574] Response Status: 200 OK in 11 milliseconds
+I0203 06:53:44.579045   11027 round_trippers.go:574] Response Status: 200 OK in 11 milliseconds
+I0203 06:53:44.579075   11027 round_trippers.go:574] Response Status: 200 OK in 11 milliseconds
+I0203 06:53:44.579108   11027 round_trippers.go:574] Response Status: 200 OK in 10 milliseconds
+I0203 06:53:44.579140   11027 round_trippers.go:574] Response Status: 200 OK in 10 milliseconds
+I0203 06:53:44.579646   11027 round_trippers.go:574] Response Status: 200 OK in 12 milliseconds
+I0203 06:53:44.757298   11027 round_trippers.go:463] GET https://172.31.31.85:6443/api/v1/namespace      s/dev/pods/webapp-pod
+I0203 06:53:44.757324   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.757499   11027 round_trippers.go:473]     Accept: application/json
+I0203 06:53:44.757517   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.759942   11027 round_trippers.go:574] Response Status: 200 OK in 2 milliseconds
+pod/webapp-pod unchanged
+I0203 06:53:44.760749   11027 round_trippers.go:463] GET https://172.31.31.85:6443/api/v1/namespace      s/dev/pods/myapp-pod
+I0203 06:53:44.760767   11027 round_trippers.go:469] Request Headers:
+I0203 06:53:44.760852   11027 round_trippers.go:473]     Accept: application/json
+I0203 06:53:44.760900   11027 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:53:44.762706   11027 round_trippers.go:574] Response Status: 200 OK in 1 milliseconds
+pod/myapp-pod unchanged
+I0203 06:53:44.763354   11027 apply.go:447] Running apply post-processor function
+ubuntu@master:~/manifests$ kubectl get pod
+NAME         READY   STATUS    RESTARTS   AGE
+myapp-pod    1/1     Running   0          131m
+webapp-pod   1/1     Running   0          8m42s
+ubuntu@master:~/manifests$ kubectl get nodes
+NAME     STATUS   ROLES                  AGE     VERSION
+master   Ready    control-plane,master   4h9m    v1.23.3
+node1    Ready    <none>                 3h38m   v1.23.3
+node13   Ready    <none>                 3h14m   v1.23.3
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME         READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS G      ATES
+myapp-pod    1/1     Running   0          131m    10.36.0.2   node13   <none>           <none>
+webapp-pod   1/1     Running   0          8m53s   10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ ls
+pod.yml  pod1.yml  ss.yml  svc.yml
+ubuntu@master:~/manifests$ vi s
+ss.yml   svc.yml
+ubuntu@master:~/manifests$ vi svc.yml
+ubuntu@master:~/manifests$ cat svc.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: websvc
+  namespace: dev
+spec:
+  type: ClusterIp
+  selector:
+    app: webapp
+  ports:
+   - targetPort: 8080
+     port: 80
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp-pod
+  namespace: dev
+  labels:
+    app: webapp
+spec:
+  containers:
+  - name: webapp-c
+    image: mylandmarktech/java-web-app
+    ports:
+    - containerPort: 8080
+
+ubuntu@master:~/manifests$ kubectl apply -f svc.yml -v=7
+I0203 06:57:54.154769   11131 loader.go:372] Config loaded from file:  /home/ubuntu/.kube/config
+I0203 06:57:54.156025   11131 round_trippers.go:463] GET https://172.31.31.85:6443/openapi/v2?timeo      ut=32s
+I0203 06:57:54.156044   11131 round_trippers.go:469] Request Headers:
+I0203 06:57:54.156060   11131 round_trippers.go:473]     Accept: application/com.github.proto-opena      pi.spec.v2@v1.0+protobuf
+I0203 06:57:54.156073   11131 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:57:54.177471   11131 round_trippers.go:574] Response Status: 200 OK in 21 milliseconds
+I0203 06:57:54.262995   11131 round_trippers.go:463] GET https://172.31.31.85:6443/api/v1/namespace      s/dev/services/websvc
+I0203 06:57:54.263022   11131 round_trippers.go:469] Request Headers:
+I0203 06:57:54.263035   11131 round_trippers.go:473]     Accept: application/json
+I0203 06:57:54.263048   11131 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:57:54.265198   11131 round_trippers.go:574] Response Status: 404 Not Found in 2 millisecon      ds
+I0203 06:57:54.265444   11131 round_trippers.go:463] GET https://172.31.31.85:6443/api/v1/namespace      s/dev
+I0203 06:57:54.265465   11131 round_trippers.go:469] Request Headers:
+I0203 06:57:54.265481   11131 round_trippers.go:473]     Accept: application/json
+I0203 06:57:54.265494   11131 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:57:54.267257   11131 round_trippers.go:574] Response Status: 200 OK in 1 milliseconds
+I0203 06:57:54.267386   11131 round_trippers.go:463] POST https://172.31.31.85:6443/api/v1/namespac      es/dev/services?fieldManager=kubectl-client-side-apply
+I0203 06:57:54.267403   11131 round_trippers.go:469] Request Headers:
+I0203 06:57:54.267418   11131 round_trippers.go:473]     Accept: application/json
+I0203 06:57:54.267431   11131 round_trippers.go:473]     Content-Type: application/json
+I0203 06:57:54.267451   11131 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:57:54.276481   11131 round_trippers.go:574] Response Status: 422 Unprocessable Entity in 9       milliseconds
+I0203 06:57:54.276653   11131 round_trippers.go:463] GET https://172.31.31.85:6443/api/v1/namespace      s/dev/pods/webapp-pod
+I0203 06:57:54.276673   11131 round_trippers.go:469] Request Headers:
+I0203 06:57:54.276690   11131 round_trippers.go:473]     Accept: application/json
+I0203 06:57:54.276703   11131 round_trippers.go:473]     User-Agent: kubectl/v1.23.3 (linux/amd64)       kubernetes/816c97a
+I0203 06:57:54.278539   11131 round_trippers.go:574] Response Status: 200 OK in 1 milliseconds
+pod/webapp-pod unchanged
+F0203 06:57:54.279282   11131 helpers.go:118] The Service "websvc" is invalid: spec.type: Unsupport      ed value: "ClusterIp": supported values: "ClusterIP", "ExternalName", "LoadBalancer", "NodePort"
+goroutine 1 [running]:
+k8s.io/kubernetes/vendor/k8s.io/klog/v2.stacks(0x1)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      klog/v2/klog.go:1038 +0x8a
+k8s.io/kubernetes/vendor/k8s.io/klog/v2.(*loggingT).output(0x307e000, 0x3, 0x0, 0xc0000ea000, 0x2,       {0x25f1467, 0x10}, 0xc000060800, 0x0)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      klog/v2/klog.go:987 +0x5fd
+k8s.io/kubernetes/vendor/k8s.io/klog/v2.(*loggingT).printDepth(0xc000b0e6e0, 0x96, 0x0, {0x0, 0x0},       0x1fecc00, {0xc000fac610, 0x1, 0x1})
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      klog/v2/klog.go:735 +0x1ae
+k8s.io/kubernetes/vendor/k8s.io/klog/v2.FatalDepth(...)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      klog/v2/klog.go:1518
+k8s.io/kubernetes/vendor/k8s.io/kubectl/pkg/cmd/util.fatal({0xc000b0e6e0, 0x96}, 0x1fecc00)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      kubectl/pkg/cmd/util/helpers.go:96 +0xc5
+k8s.io/kubernetes/vendor/k8s.io/kubectl/pkg/cmd/util.checkErr({0x1fe9f80, 0xc001496d20}, 0x1e781d0)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      kubectl/pkg/cmd/util/helpers.go:160 +0x2c8
+k8s.io/kubernetes/vendor/k8s.io/kubectl/pkg/cmd/util.CheckErr(...)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      kubectl/pkg/cmd/util/helpers.go:118
+k8s.io/kubernetes/vendor/k8s.io/kubectl/pkg/cmd/apply.NewCmdApply.func1(0xc000527b80, {0xc00037eb10      , 0x0, 0x3})
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      kubectl/pkg/cmd/apply/apply.go:190 +0xb1
+k8s.io/kubernetes/vendor/github.com/spf13/cobra.(*Command).execute(0xc000527b80, {0xc00037ea80, 0x3      , 0x3})
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/github.      com/spf13/cobra/command.go:860 +0x5f8
+k8s.io/kubernetes/vendor/github.com/spf13/cobra.(*Command).ExecuteC(0xc0003fe280)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/github.      com/spf13/cobra/command.go:974 +0x3bc
+k8s.io/kubernetes/vendor/github.com/spf13/cobra.(*Command).Execute(...)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/github.      com/spf13/cobra/command.go:902
+k8s.io/kubernetes/vendor/k8s.io/component-base/cli.run(0xc0003fe280)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      component-base/cli/run.go:146 +0x325
+k8s.io/kubernetes/vendor/k8s.io/component-base/cli.RunNoErrOutput(...)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      component-base/cli/run.go:84
+main.main()
+        _output/dockerized/go/src/k8s.io/kubernetes/cmd/kubectl/kubectl.go:30 +0x1e
+
+goroutine 18 [chan receive]:
+k8s.io/kubernetes/vendor/k8s.io/klog/v2.(*loggingT).flushDaemon(0x0)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      klog/v2/klog.go:1181 +0x6a
+created by k8s.io/kubernetes/vendor/k8s.io/klog/v2.init.0
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      klog/v2/klog.go:420 +0xfb
+
+goroutine 6 [select]:
+k8s.io/kubernetes/vendor/k8s.io/apimachinery/pkg/util/wait.BackoffUntil(0x0, {0x1fea280, 0xc0003ba0      c0}, 0x1, 0xc00008a360)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      apimachinery/pkg/util/wait/wait.go:167 +0x13b
+k8s.io/kubernetes/vendor/k8s.io/apimachinery/pkg/util/wait.JitterUntil(0x0, 0x12a05f200, 0x0, 0x0,       0x0)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      apimachinery/pkg/util/wait/wait.go:133 +0x89
+k8s.io/kubernetes/vendor/k8s.io/apimachinery/pkg/util/wait.Until(...)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      apimachinery/pkg/util/wait/wait.go:90
+k8s.io/kubernetes/vendor/k8s.io/apimachinery/pkg/util/wait.Forever(0x0, 0x0)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      apimachinery/pkg/util/wait/wait.go:81 +0x28
+created by k8s.io/kubernetes/vendor/k8s.io/component-base/logs.InitLogs
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/k8s.io/      component-base/logs/logs.go:179 +0x85
+
+goroutine 26 [IO wait]:
+internal/poll.runtime_pollWait(0x7f1b23f35898, 0x72)
+        /usr/local/go/src/runtime/netpoll.go:234 +0x89
+internal/poll.(*pollDesc).wait(0xc00035e100, 0xc000efa000, 0x0)
+        /usr/local/go/src/internal/poll/fd_poll_runtime.go:84 +0x32
+internal/poll.(*pollDesc).waitRead(...)
+        /usr/local/go/src/internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc00035e100, {0xc000efa000, 0x1bf3, 0x1bf3})
+        /usr/local/go/src/internal/poll/fd_unix.go:167 +0x25a
+net.(*netFD).Read(0xc00035e100, {0xc000efa000, 0xc000efb0dc, 0x1a})
+        /usr/local/go/src/net/fd_posix.go:56 +0x29
+net.(*conn).Read(0xc00000e010, {0xc000efa000, 0x4fab7e, 0xc0000cb7f0})
+        /usr/local/go/src/net/net.go:183 +0x45
+crypto/tls.(*atLeastReader).Read(0xc000e7dc38, {0xc000efa000, 0x0, 0x409e2d})
+        /usr/local/go/src/crypto/tls/conn.go:777 +0x3d
+bytes.(*Buffer).ReadFrom(0xc00009c978, {0x1fe80c0, 0xc000e7dc38})
+        /usr/local/go/src/bytes/buffer.go:204 +0x98
+crypto/tls.(*Conn).readFromUntil(0xc00009c700, {0x1febaa0, 0xc00000e010}, 0xb1c)
+        /usr/local/go/src/crypto/tls/conn.go:799 +0xe5
+crypto/tls.(*Conn).readRecordOrCCS(0xc00009c700, 0x0)
+        /usr/local/go/src/crypto/tls/conn.go:606 +0x112
+crypto/tls.(*Conn).readRecord(...)
+        /usr/local/go/src/crypto/tls/conn.go:574
+crypto/tls.(*Conn).Read(0xc00009c700, {0xc000124000, 0x1000, 0x8d9b00})
+        /usr/local/go/src/crypto/tls/conn.go:1277 +0x16f
+bufio.(*Reader).Read(0xc000278120, {0xc00013e820, 0x9, 0x8e7ac2})
+        /usr/local/go/src/bufio/bufio.go:227 +0x1b4
+io.ReadAtLeast({0x1fe7ec0, 0xc000278120}, {0xc00013e820, 0x9, 0x9}, 0x9)
+        /usr/local/go/src/io/io.go:328 +0x9a
+io.ReadFull(...)
+        /usr/local/go/src/io/io.go:347
+k8s.io/kubernetes/vendor/golang.org/x/net/http2.readFrameHeader({0xc00013e820, 0x9, 0xc001ee8d20},       {0x1fe7ec0, 0xc000278120})
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/golang.      org/x/net/http2/frame.go:237 +0x6e
+k8s.io/kubernetes/vendor/golang.org/x/net/http2.(*Framer).ReadFrame(0xc00013e7e0)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/golang.      org/x/net/http2/frame.go:498 +0x95
+k8s.io/kubernetes/vendor/golang.org/x/net/http2.(*clientConnReadLoop).run(0xc0000cbf98)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/golang.      org/x/net/http2/transport.go:2101 +0x130
+k8s.io/kubernetes/vendor/golang.org/x/net/http2.(*ClientConn).readLoop(0xc0004a6480)
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/golang.      org/x/net/http2/transport.go:1997 +0x6f
+created by k8s.io/kubernetes/vendor/golang.org/x/net/http2.(*Transport).newClientConn
+        /workspace/src/k8s.io/kubernetes/_output/dockerized/go/src/k8s.io/kubernetes/vendor/golang.      org/x/net/http2/transport.go:725 +0xac5
+ubuntu@master:~/manifests$ kubectl get all
+NAME             READY   STATUS    RESTARTS   AGE
+pod/myapp-pod    1/1     Running   0          136m
+pod/webapp-pod   1/1     Running   0          14m
+ubuntu@master:~/manifests$ kubectl get svc websvc
+Error from server (NotFound): services "websvc" not found
+ubuntu@master:~/manifests$ kubectl get svc
+No resources found in dev namespace.
+ubuntu@master:~/manifests$ ls
+pod.yml  pod1.yml  ss.yml  svc.yml
+ubuntu@master:~/manifests$ vi ss.yml
+ubuntu@master:~/manifests$ kubectl apply -f ss.yml
+The Service "websvc" is invalid: spec.type: Unsupported value: "ClusterIp": supported values: "Clus      terIP", "ExternalName", "LoadBalancer", "NodePort"
+ubuntu@master:~/manifests$ vi ss.yml
+ubuntu@master:~/manifests$ vi svc.yml
+ubuntu@master:~/manifests$ vi svc.yml
+ubuntu@master:~/manifests$ kubectl apply -f svc.yml
+service/websvc created
+pod/webapp-pod unchanged
+ubuntu@master:~/manifests$ kubectl get all
+NAME             READY   STATUS    RESTARTS   AGE
+pod/myapp-pod    1/1     Running   0          142m
+pod/webapp-pod   1/1     Running   0          19m
+
+NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+service/websvc   ClusterIP   10.101.7.190   <none>        80/TCP    6s
+ubuntu@master:~/manifests$ cat ss.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: websvc
+  namespace: dev
+spec:
+  type: ClusterIP
+  selector:
+    app: webapp
+  ports:
+   - targetPort: 8080
+     port: 80
+
+ubuntu@master:~/manifests$ kubectl get all
+NAME             READY   STATUS    RESTARTS   AGE
+pod/myapp-pod    1/1     Running   0          144m
+pod/webapp-pod   1/1     Running   0          22m
+
+NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+service/websvc   ClusterIP   10.101.7.190   <none>        80/TCP    2m17s
+ubuntu@master:~/manifests$ kubectl get node
+NAME     STATUS   ROLES                  AGE     VERSION
+master   Ready    control-plane,master   4h23m   v1.23.3
+node1    Ready    <none>                 3h51m   v1.23.3
+node13   Ready    <none>                 3h28m   v1.23.3
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME         READY   STATUS    RESTARTS   AGE    IP          NODE     NOMINATED NODE   READINESS GA      TES
+myapp-pod    1/1     Running   0          145m   10.36.0.2   node13   <none>           <none>
+webapp-pod   1/1     Running   0          22m    10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ curl -v 10.101.7.190/
+*   Trying 10.101.7.190...
+* TCP_NODELAY set
+* Connected to 10.101.7.190 (10.101.7.190) port 80 (#0)
+> GET / HTTP/1.1
+> Host: 10.101.7.190
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Server: Apache-Coyote/1.1
+< Content-Type: text/html;charset=UTF-8
+< Transfer-Encoding: chunked
+< Date: Thu, 03 Feb 2022 07:07:57 GMT
+<
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Apache Tomcat/8.0.20</title>
+        <link href="favicon.ico" rel="icon" type="image/x-icon" />
+        <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link href="tomcat.css" rel="stylesheet" type="text/css" />
+    </head>
+
+    <body>
+        <div id="wrapper">
+            <div id="navigation" class="curved container">
+                <span id="nav-home"><a href="http://tomcat.apache.org/">Home</a></span>
+                <span id="nav-hosts"><a href="/docs/">Documentation</a></span>
+                <span id="nav-config"><a href="/docs/config/">Configuration</a></span>
+                <span id="nav-examples"><a href="/examples/">Examples</a></span>
+                <span id="nav-wiki"><a href="http://wiki.apache.org/tomcat/FrontPage">Wiki</a></spa      n>
+                <span id="nav-lists"><a href="http://tomcat.apache.org/lists.html">Mailing Lists</a      ></span>
+                <span id="nav-help"><a href="http://tomcat.apache.org/findhelp.html">Find Help</a><      /span>
+                <br class="separator" />
+            </div>
+            <div id="asf-box">
+                <h1>Apache Tomcat/8.0.20</h1>
+            </div>
+            <div id="upper" class="curved container">
+                <div id="congrats" class="curved container">
+                    <h2>If you're seeing this, you've successfully installed Tomcat. Congratulation      s!</h2>
+                </div>
+                <div id="notice">
+                    <img src="tomcat.png" alt="[tomcat logo]" />
+                    <div id="tasks">
+                        <h3>Recommended Reading:</h3>
+                        <h4><a href="/docs/security-howto.html">Security Considerations HOW-TO</a><      /h4>
+                        <h4><a href="/docs/manager-howto.html">Manager Application HOW-TO</a></h4>
+                        <h4><a href="/docs/cluster-howto.html">Clustering/Session Replication HOW-T      O</a></h4>
+                    </div>
+                </div>
+                <div id="actions">
+                    <div class="button">
+                        <a class="container shadow" href="/manager/status"><span>Server Status</spa      n></a>
+                    </div>
+                    <div class="button">
+                        <a class="container shadow" href="/manager/html"><span>Manager App</span></      a>
+                    </div>
+                    <div class="button">
+                        <a class="container shadow" href="/host-manager/html"><span>Host Manager</s      pan></a>
+                    </div>
+                </div>
+                <!--
+                <br class="separator" />
+                -->
+                <br class="separator" />
+            </div>
+            <div id="middle" class="curved container">
+                <h3>Developer Quick Start</h3>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/docs/setup.html">Tomcat Setup</a></p>
+                        <p><a href="/docs/appdev/">First Web Application</a></p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/docs/realm-howto.html">Realms &amp; AAA</a></p>
+                        <p><a href="/docs/jndi-datasource-examples-howto.html">JDBC DataSources</a>      </p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/examples/">Examples</a></p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="http://wiki.apache.org/tomcat/Specifications">Servlet Specifica      tions</a></p>
+                        <p><a href="http://wiki.apache.org/tomcat/TomcatVersions">Tomcat Versions</      a></p>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <div id="lower">
+                <div id="low-manage" class="">
+                    <div class="curved container">
+                        <h3>Managing Tomcat</h3>
+                        <p>For security, access to the <a href="/manager/html">manager webapp</a> i      s restricted.
+                        Users are defined in:</p>
+                        <pre>$CATALINA_HOME/conf/tomcat-users.xml</pre>
+                        <p>In Tomcat 8.0 access to the manager application is split between
+                           different users. &nbsp; <a href="/docs/manager-howto.html">Read more...<      /a></p>
+                        <br />
+                        <h4><a href="/docs/RELEASE-NOTES.txt">Release Notes</a></h4>
+                        <h4><a href="/docs/changelog.html">Changelog</a></h4>
+                        <h4><a href="http://tomcat.apache.org/migration.html">Migration Guide</a></      h4>
+                        <h4><a href="http://tomcat.apache.org/security.html">Security Notices</a></      h4>
+                    </div>
+                </div>
+                <div id="low-docs" class="">
+                    <div class="curved container">
+                        <h3>Documentation</h3>
+                        <h4><a href="/docs/">Tomcat 8.0 Documentation</a></h4>
+                        <h4><a href="/docs/config/">Tomcat 8.0 Configuration</a></h4>
+                        <h4><a href="http://wiki.apache.org/tomcat/FrontPage">Tomcat Wiki</a></h4>
+                        <p>Find additional important configuration information in:</p>
+                        <pre>$CATALINA_HOME/RUNNING.txt</pre>
+                        <p>Developers may be interested in:</p>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/bugreport.html">Tomcat 8.0 Bug Da      tabase</a></li>
+                            <li><a href="/docs/api/index.html">Tomcat 8.0 JavaDocs</a></li>
+                            <li><a href="http://svn.apache.org/repos/asf/tomcat/tc8.0.x/">Tomcat 8.      0 SVN Repository</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="low-help" class="">
+                    <div class="curved container">
+                        <h3>Getting Help</h3>
+                        <h4><a href="http://tomcat.apache.org/faq/">FAQ</a> and <a href="http://tom      cat.apache.org/lists.html">Mailing Lists</a></h4>
+                        <p>The following mailing lists are available:</p>
+                        <ul>
+                            <li id="list-announce"><strong><a href="http://tomcat.apache.org/lists.      html#tomcat-announce">tomcat-announce</a><br />
+                                Important announcements, releases, security vulnerability notificat      ions. (Low volume).</strong>
+                            </li>
+                            <li><a href="http://tomcat.apache.org/lists.html#tomcat-users">tomcat-u      sers</a><br />
+                                User support and discussion
+                            </li>
+                            <li><a href="http://tomcat.apache.org/lists.html#taglibs-user">taglibs-      user</a><br />
+                                User support and discussion for <a href="http://tomcat.apache.org/t      aglibs/">Apache Taglibs</a>
+                            </li>
+                            <li><a href="http://tomcat.apache.org/lists.html#tomcat-dev">tomcat-dev      </a><br />
+                                Development mailing list, including commit messages
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <div id="footer" class="curved container">
+                <div class="col20">
+                    <div class="container">
+                        <h4>Other Downloads</h4>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/download-connectors.cgi">Tomcat C      onnectors</a></li>
+                            <li><a href="http://tomcat.apache.org/download-native.cgi">Tomcat Nativ      e</a></li>
+                            <li><a href="http://tomcat.apache.org/taglibs/">Taglibs</a></li>
+                            <li><a href="/docs/deployer-howto.html">Deployer</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Other Documentation</h4>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/connectors-doc/">Tomcat Connector      s</a></li>
+                            <li><a href="http://tomcat.apache.org/connectors-doc/">mod_jk Documenta      tion</a></li>
+                            <li><a href="http://tomcat.apache.org/native-doc/">Tomcat Native</a></l      i>
+                            <li><a href="/docs/deployer-howto.html">Deployer</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Get Involved</h4>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/getinvolved.html">Overview</a></l      i>
+                            <li><a href="http://tomcat.apache.org/svn.html">SVN Repositories</a></l      i>
+                            <li><a href="http://tomcat.apache.org/lists.html">Mailing Lists</a></li      >
+                            <li><a href="http://wiki.apache.org/tomcat/FrontPage">Wiki</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Miscellaneous</h4>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/contact.html">Contact</a></li>
+                            <li><a href="http://tomcat.apache.org/legal.html">Legal</a></li>
+                            <li><a href="http://www.apache.org/foundation/sponsorship.html">Sponsor      ship</a></li>
+                            <li><a href="http://www.apache.org/foundation/thanks.html">Thanks</a></      li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Apache Software Foundation</h4>
+                        <ul>
+                            <li><a href="http://tomcat.apache.org/whoweare.html">Who We Are</a></li      >
+                            <li><a href="http://tomcat.apache.org/heritage.html">Heritage</a></li>
+                            <li><a href="http://www.apache.org">Apache Home</a></li>
+                            <li><a href="http://tomcat.apache.org/resources.html">Resources</a></li      >
+                        </ul>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <p class="copyright">Copyright &copy;1999-2022 Apache Software Foundation.  All Rights       Reserved</p>
+        </div>
+    </body>
+
+</html>
+* Connection #0 to host 10.101.7.190 left intact
+ubuntu@master:~/manifests$ kubectl get ep
+NAME     ENDPOINTS        AGE
+websvc   10.36.0.1:8080   6m18s
+ubuntu@master:~/manifests$ kubectl describe svc websvc
+Name:              websvc
+Namespace:         dev
+Labels:            <none>
+Annotations:       <none>
+Selector:          app=webapp
+Type:              ClusterIP
+IP Family Policy:  SingleStack
+IP Families:       IPv4
+IP:                10.101.7.190
+IPs:               10.101.7.190
+Port:              <unset>  80/TCP
+TargetPort:        8080/TCP
+Endpoints:         10.36.0.1:8080
+Session Affinity:  None
+Events:            <none>
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME         READY   STATUS    RESTARTS   AGE    IP          NODE     NOMINATED NODE   READINESS GA      TES
+myapp-pod    1/1     Running   0          151m   10.36.0.2   node13   <none>           <none>
+webapp-pod   1/1     Running   0          28m    10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ kubectl get svc -o wide
+NAME     TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE   SELECTOR
+websvc   ClusterIP   10.101.7.190   <none>        80/TCP    34m   app=webapp
+ubuntu@master:~/manifests$ curl -v 10.101.7.190/java-web-app
+*   Trying 10.101.7.190...
+* TCP_NODELAY set
+* Connected to 10.101.7.190 (10.101.7.190) port 80 (#0)
+> GET /java-web-app HTTP/1.1
+> Host: 10.101.7.190
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 302 Found
+< Server: Apache-Coyote/1.1
+< Location: http://10.101.7.190/java-web-app/
+< Transfer-Encoding: chunked
+< Date: Thu, 03 Feb 2022 07:44:21 GMT
+<
+* Connection #0 to host 10.101.7.190 left intact
+ubuntu@master:~/manifests$ ls
+pod.yml  pod1.yml  ss.yml  svc.yml
+ubuntu@master:~/manifests$ vi svc.yml
+ubuntu@master:~/manifests$ vi app.yml
+ubuntu@master:~/manifests$ cat app.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mavenapp-pod
+  labels:
+    app: mavenapp
+spec:
+  containers:
+  - name: mavenapp-c
+    image: mylandmarktech/maven-web-app
+    ports:
+    - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mavenappsvc
+spec:
+  selector:
+    app: mavenapp
+  ports:
+  - port: 80
+    targetPort: 8080
+ubuntu@master:~/manifests$ kubectl apply -f app.yml
+pod/mavenapp-pod created
+service/mavenappsvc created
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME           READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS       GATES
+mavenapp-pod   1/1     Running   0          16s     10.36.0.3   node13   <none>           <none>
+myapp-pod      1/1     Running   0          3h32m   10.36.0.2   node13   <none>           <none>
+webapp-pod     1/1     Running   0          89m     10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ kubectl describe pod mavenapp-pod
+Name:         mavenapp-pod
+Namespace:    dev
+Priority:     0
+Node:         node13/172.31.6.54
+Start Time:   Thu, 03 Feb 2022 08:14:12 +0000
+Labels:       app=mavenapp
+Annotations:  <none>
+Status:       Running
+IP:           10.36.0.3
+IPs:
+  IP:  10.36.0.3
+Containers:
+  mavenapp-c:
+    Container ID:   containerd://5501f5397de36d5850fa43f9166164e3ebd468abf2e9d7ecb07c0ef59905c219
+    Image:          mylandmarktech/maven-web-app
+    Image ID:       docker.io/mylandmarktech/maven-web-app@sha256:4a6f1d833679a5b7e3898b08cc3c408fe      94ac1badaf7082f0a3ea960ba3d01be
+    Port:           8080/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Thu, 03 Feb 2022 08:14:14 +0000
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-rbtnw (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  kube-api-access-rbtnw:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  110s  default-scheduler  Successfully assigned dev/mavenapp-pod to node13
+  Normal  Pulling    109s  kubelet            Pulling image "mylandmarktech/maven-web-app"
+  Normal  Pulled     108s  kubelet            Successfully pulled image "mylandmarktech/maven-web-a      pp" in 962.187197ms
+  Normal  Created    108s  kubelet            Created container mavenapp-c
+  Normal  Started    108s  kubelet            Started container mavenapp-c
+ubuntu@master:~/manifests$ kubectl get ep -o wide
+NAME          ENDPOINTS        AGE
+mavenappsvc   10.36.0.3:8080   11m
+websvc        10.36.0.1:8080   80m
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME           READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS       GATES
+mavenapp-pod   1/1     Running   0          11m     10.36.0.3   node13   <none>           <none>
+myapp-pod      1/1     Running   0          3h43m   10.36.0.2   node13   <none>           <none>
+webapp-pod     1/1     Running   0          101m    10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ kubectl get svc -o wide
+NAME          TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE   SELECTOR
+mavenappsvc   ClusterIP   10.97.247.84   <none>        80/TCP    12m   app=mavenapp
+websvc        ClusterIP   10.101.7.190   <none>        80/TCP    81m   app=webapp
+ubuntu@master:~/manifests$ kubectl exec -it mavenapp-pod /bin/bash
+kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exe      c [POD] -- [COMMAND] instead.
+root@mavenapp-pod:/usr/local/tomcat# curl -v websvc/java-web-app
+* Hostname was NOT found in DNS cache
+*   Trying 10.101.7.190...
+* Connected to websvc (10.101.7.190) port 80 (#0)
+> GET /java-web-app HTTP/1.1
+> User-Agent: curl/7.38.0
+> Host: websvc
+> Accept: */*
+>
+< HTTP/1.1 302 Found
+* Server Apache-Coyote/1.1 is not blacklisted
+< Server: Apache-Coyote/1.1
+< Location: http://websvc/java-web-app/
+< Transfer-Encoding: chunked
+< Date: Thu, 03 Feb 2022 08:33:58 GMT
+<
+* Connection #0 to host websvc left intact
+root@mavenapp-pod:/usr/local/tomcat# exit
+exit
+ubuntu@master:~/manifests$ kubectl get svc -o wide
+NAME          TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE    SELECTOR
+mavenappsvc   ClusterIP   10.97.247.84   <none>        80/TCP    81m    app=mavenapp
+websvc        ClusterIP   10.101.7.190   <none>        80/TCP    150m   app=webapp
+ubuntu@master:~/manifests$ cat app.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mavenapp-pod
+  labels:
+    app: mavenapp
+spec:
+  containers:
+  - name: mavenapp-c
+    image: mylandmarktech/maven-web-app
+    ports:
+    - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mavenappsvc
+spec:
+  selector:
+    app: mavenapp
+  ports:
+  - port: 80
+    targetPort: 8080
+ubuntu@master:~/manifests$ vi nodeapp.yml
+ubuntu@master:~/manifests$ kubectl create secret docker-registry dhcred \
+> --docker-server=docker.io --docker-username=mylandmarktech \
+> --docker-password=Mercy2012
+secret/dhcred created
+ubuntu@master:~/manifests$ cat nodeapp.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nodeapp
+  labels:
+    app: nodeapp
+spec:
+  containers:
+  - name: nodeappc
+    image: mylandmarktech/nodejs-fe-app:1
+    ports:
+    - containerPort: 9981
+  imagePullSecrets:
+  - name: dhcred
+ubuntu@master:~/manifests$ kubectl apply -f nodeapp.yml
+pod/nodeapp created
+ubuntu@master:~/manifests$ kubectl get svc -o wide
+NAME          TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE    SELECTOR
+mavenappsvc   ClusterIP   10.97.247.84   <none>        80/TCP    111m   app=mavenapp
+websvc        ClusterIP   10.101.7.190   <none>        80/TCP    3h     app=webapp
+ubuntu@master:~/manifests$ kubectl get po -o wide
+NAME           READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS       GATES
+mavenapp-pod   1/1     Running   0          112m    10.36.0.3   node13   <none>           <none>
+myapp-pod      1/1     Running   0          5h24m   10.36.0.2   node13   <none>           <none>
+nodeapp        1/1     Running   0          46s     10.36.0.4   node13   <none>           <none>
+webapp-pod     1/1     Running   0          3h21m   10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ kubectl secret
+error: unknown command "secret" for "kubectl"
+ubuntu@master:~/manifests$ kubectl get secret
+NAME                  TYPE                                  DATA   AGE
+default-token-7bhdt   kubernetes.io/service-account-token   3      5h59m
+dhcred                kubernetes.io/dockerconfigjson        1      9m5s
+ubuntu@master:~/manifests$
+ubuntu@master:~/manifests$ kubectl get secret dhcred -o wide
+NAME     TYPE                             DATA   AGE
+dhcred   kubernetes.io/dockerconfigjson   1      9m26s
+ubuntu@master:~/manifests$
+ubuntu@master:~/manifests$ kubectl get secret dhcred -o yaml
+apiVersion: v1
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJkb2NrZXIuaW8iOnsidXNlcm5hbWUiOiJteWxhbmRtYXJrdGVjaCIsInBhc3N3b3      JkIjoiTWVyY3kyMDEyIiwiYXV0aCI6ImJYbHNZVzVrYldGeWEzUmxZMmc2VFdWeVkza3lNREV5In19fQ==
+kind: Secret
+metadata:
+  creationTimestamp: "2022-02-03T10:04:20Z"
+  name: dhcred
+  namespace: dev
+  resourceVersion: "37227"
+  uid: ec8982d4-a7f0-4ad6-be42-7f5efc708abd
+type: kubernetes.io/dockerconfigjson
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME           READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS       GATES
+mavenapp-pod   1/1     Running   0          135m    10.36.0.3   node13   <none>           <none>
+myapp-pod      1/1     Running   0          5h47m   10.36.0.2   node13   <none>           <none>
+nodeapp        1/1     Running   0          24m     10.36.0.4   node13   <none>           <none>
+webapp-pod     1/1     Running   0          3h44m   10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ kubectl get svc -o wide
+NAME          TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE     SELECTOR
+mavenappsvc   ClusterIP   10.97.247.84   <none>        80/TCP    137m    app=mavenapp
+websvc        ClusterIP   10.101.7.190   <none>        80/TCP    3h26m   app=webapp
+ubuntu@master:~/manifests$ kubectl describe svc websvc
+Name:              websvc
+Namespace:         dev
+Labels:            <none>
+Annotations:       <none>
+Selector:          app=webapp
+Type:              ClusterIP
+IP Family Policy:  SingleStack
+IP Families:       IPv4
+IP:                10.101.7.190
+IPs:               10.101.7.190
+Port:              <unset>  80/TCP
+TargetPort:        8080/TCP
+Endpoints:         10.36.0.1:8080
+Session Affinity:  None
+Events:            <none>
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME           READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS       GATES
+mavenapp-pod   1/1     Running   0          140m    10.36.0.3   node13   <none>           <none>
+myapp-pod      1/1     Running   0          5h51m   10.36.0.2   node13   <none>           <none>
+nodeapp        1/1     Running   0          28m     10.36.0.4   node13   <none>           <none>
+webapp-pod     1/1     Running   0          3h49m   10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ kubectl exec -it mavenapp-pod /bin/bash
+kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exe      c [POD] -- [COMMAND] instead.
+root@mavenapp-pod:/usr/local/tomcat# curl -v websvc.dev.svc.cluster.local/java-web-app
+* Hostname was NOT found in DNS cache
+*   Trying 10.101.7.190...
+* Connected to websvc.dev.svc.cluster.local (10.101.7.190) port 80 (#0)
+> GET /java-web-app HTTP/1.1
+> User-Agent: curl/7.38.0
+> Host: websvc.dev.svc.cluster.local
+> Accept: */*
+>
+< HTTP/1.1 302 Found
+* Server Apache-Coyote/1.1 is not blacklisted
+< Server: Apache-Coyote/1.1
+< Location: http://websvc.dev.svc.cluster.local/java-web-app/
+< Transfer-Encoding: chunked
+< Date: Thu, 03 Feb 2022 10:36:08 GMT
+<
+* Connection #0 to host websvc.dev.svc.cluster.local left intact
+root@mavenapp-pod:/usr/local/tomcat# exit
+exit
+ubuntu@master:~/manifests$ kubectl get svc
+NAME          TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+mavenappsvc   ClusterIP   10.97.247.84   <none>        80/TCP    164m
+websvc        ClusterIP   10.101.7.190   <none>        80/TCP    3h53m
+ubuntu@master:~/manifests$ kubectl edit svc mavenappsvc
+Edit cancelled, no changes made.
+ubuntu@master:~/manifests$ cat app.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mavenapp-pod
+  labels:
+    app: mavenapp
+spec:
+  containers:
+  - name: mavenapp-c
+    image: mylandmarktech/maven-web-app
+    ports:
+    - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mavenappsvc
+spec:
+  selector:
+    app: mavenapp
+  ports:
+  - port: 80
+    targetPort: 8080
+ubuntu@master:~/manifests$ kubectl get svc mavenappsvc -o yaml
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"mavenappsvc","namesp      ace":"dev"},"spec":{"ports":[{"port":80,"targetPort":8080}],"selector":{"app":"mavenapp"}}}
+  creationTimestamp: "2022-02-03T08:14:12Z"
+  name: mavenappsvc
+  namespace: dev
+  resourceVersion: "27958"
+  uid: bb1cf07a-7e0a-4627-9751-756033399d5b
+spec:
+  clusterIP: 10.97.247.84
+  clusterIPs:
+  - 10.97.247.84
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: mavenapp
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+ubuntu@master:~/manifests$ kubectl edit svc mavenappsvc
+service/mavenappsvc edited
+ubuntu@master:~/manifests$ kubectl get svc -o wide
+NAME          TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE     SELECTOR
+mavenappsvc   NodePort    10.97.247.84   <none>        80:32000/TCP   3h52m   app=mavenapp
+websvc        ClusterIP   10.101.7.190   <none>        80/TCP         5h2m    app=webapp
+ubuntu@master:~/manifests$ kubectl describe svc mavenappsvc
+Name:                     mavenappsvc
+Namespace:                dev
+Labels:                   <none>
+Annotations:              <none>
+Selector:                 app=mavenapp
+Type:                     NodePort
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       10.97.247.84
+IPs:                      10.97.247.84
+Port:                     <unset>  80/TCP
+TargetPort:               8080/TCP
+NodePort:                 <unset>  32000/TCP
+Endpoints:                10.36.0.3:8080
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+ubuntu@master:~/manifests$ kubectl get node -o wide
+NAME     STATUS   ROLES                  AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE                   KERNEL-VERSION   CONTAINER-RUNTIME
+master   Ready    control-plane,master   9h    v1.23.3   172.31.31.85   <none>        Ubuntu 18.04.      6 LTS   5.4.0-1060-aws   containerd://1.5.5
+node1    Ready    <none>                 8h    v1.23.3   172.31.1.172   <none>        Ubuntu 18.04.      6 LTS   5.4.0-1060-aws   containerd://1.5.5
+node13   Ready    <none>                 8h    v1.23.3   172.31.6.54    <none>        Ubuntu 18.04.      6 LTS   5.4.0-1060-aws   containerd://1.5.5
+ubuntu@master:~/manifests$ kubectl get node -o wide
+NAME     STATUS   ROLES                  AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE           ION   CONTAINER-RUNTIME
+master   Ready    control-plane,master   9h    v1.23.3   172.31.31.85   <none>        Ubuntu 18.04.6 LTS aws   containerd://1.5.5
+node1    Ready    <none>                 8h    v1.23.3   172.31.1.172   <none>        Ubuntu 18.04.6 LTS aws   containerd://1.5.5
+node13   Ready    <none>                 8h    v1.23.3   172.31.6.54    <none>        Ubuntu 18.04.6 LTS aws   containerd://1.5.5
+ubuntu@master:~/manifests$ kubectl get node
+NAME     STATUS   ROLES                  AGE   VERSION
+master   Ready    control-plane,master   9h    v1.23.3
+node1    Ready    <none>                 8h    v1.23.3
+node13   Ready    <none>                 8h    v1.23.3
+ubuntu@master:~/manifests$ hostname -i
+172.31.31.85 10.32.0.1 fe80::4ab:deff:feaa:f770 fe80::6446:bcff:fe46:6ead fe80::2099:f2ff:fe3b:ca4 fe80::c:42df fe80::30e8:c0ff:fe39:8e97 fe80::d4d1:d6ff:fe1e:3d3e fe80::96:58ff:fe66:d015 fe80::bc8d:e5ff:fede:b
+ubuntu@master:~/manifests$ curl -v 172.31.31.85:32000/maven-web-app
+*   Trying 172.31.31.85...
+* TCP_NODELAY set
+* Connected to 172.31.31.85 (172.31.31.85) port 32000 (#0)
+> GET /maven-web-app HTTP/1.1
+> Host: 172.31.31.85:32000
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 302 Found
+< Server: Apache-Coyote/1.1
+< Location: http://172.31.31.85:32000/maven-web-app/
+< Transfer-Encoding: chunked
+< Date: Thu, 03 Feb 2022 12:12:00 GMT
+<
+* Connection #0 to host 172.31.31.85 left intact
+ubuntu@master:~/manifests$
+ubuntu@master:~/manifests$ curl -v 3.128.190.1:32000/maven-web-app
+*   Trying 3.128.190.1...
+* TCP_NODELAY set
+* Connected to 3.128.190.1 (3.128.190.1) port 32000 (#0)
+> GET /maven-web-app HTTP/1.1
+> Host: 3.128.190.1:32000
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 302 Found
+< Server: Apache-Coyote/1.1
+< Location: http://3.128.190.1:32000/maven-web-app/
+< Transfer-Encoding: chunked
+< Date: Thu, 03 Feb 2022 13:18:26 GMT
+<
+* Connection #0 to host 3.128.190.1 left intact
+ubuntu@master:~/manifests$
+ubuntu@master:~/manifests$
+ubuntu@master:~/manifests$ ls
+app.yml  nodeapp.yml  pod.yml  pod1.yml  ss.yml  svc.yml
+ubuntu@master:~/manifests$ kubectl get node
+NAME     STATUS   ROLES                  AGE   VERSION
+master   Ready    control-plane,master   13h   v1.23.3
+node1    Ready    <none>                 12h   v1.23.3
+node13   Ready    <none>                 12h   v1.23.3
+ubuntu@master:~/manifests$ kubectl get pod
+NAME           READY   STATUS    RESTARTS   AGE
+mavenapp-pod   1/1     Running   0          7h32m
+myapp-pod      1/1     Running   0          11h
+nodeapp        1/1     Running   0          5h41m
+webapp-pod     1/1     Running   0          9h
+ubuntu@master:~/manifests$ kubectl delete pod myapp-pod
+pod "myapp-pod" deleted
+ubuntu@master:~/manifests$ kubectl get pod
+NAME           READY   STATUS    RESTARTS   AGE
+mavenapp-pod   1/1     Running   0          7h33m
+nodeapp        1/1     Running   0          5h41m
+webapp-pod     1/1     Running   0          9h
+ubuntu@master:~/manifests$ kubectl get pod -n kube system
+Error from server (NotFound): namespaces "kube" not found
+ubuntu@master:~/manifests$ kubectl get pod -n kube-system
+NAME                             READY   STATUS    RESTARTS      AGE
+coredns-64897985d-bhs5h          1/1     Running   0             13h
+coredns-64897985d-pb4rf          1/1     Running   0             13h
+etcd-master                      1/1     Running   0             13h
+kube-apiserver-master            1/1     Running   0             13h
+kube-controller-manager-master   1/1     Running   0             13h
+kube-proxy-45f7n                 1/1     Running   0             12h
+kube-proxy-6mgb8                 1/1     Running   0             12h
+kube-proxy-n5nkj                 1/1     Running   0             13h
+kube-scheduler-master            1/1     Running   0             13h
+weave-net-c476d                  2/2     Running   1 (12h ago)   12h
+weave-net-m5f2d                  2/2     Running   1 (12h ago)   12h
+weave-net-tb8cz                  2/2     Running   1 (12h ago)   12h
+ubuntu@master:~/manifests$
+ubuntu@master:~/manifests$
+ubuntu@master:~/manifests$
