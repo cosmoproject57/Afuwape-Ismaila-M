@@ -33,7 +33,7 @@ echo "jenkins  ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/jenkins"
 echo "jenkins  ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/jenkins
 
 # assign password to jenkins.
-echo echo "jenkins:admin" | chpasswd
+echo "jenkins:admin" | chpasswd
 #configure password authentication
 sudo sed -i "/^[^#]*PasswordAuthentication[[:space:]]no/c\PasswordAuthentication yes" /etc/ssh/sshd_config
 
