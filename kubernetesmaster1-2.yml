@@ -1,0 +1,688 @@
+# First, login as ‘root’ user because the following set of commands need to be executed with ‘sudo’ permissions.
+
+sudo hostname master
+#become root user 
+sudo -i
+
+# Install Required packages and apt keys.
+sudo apt-get update -y
+sudo apt-get install -y apt-transport-https
+
+sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+
+sudo cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+
+sudo apt-get update -y
+
+#Turn Off Swap Space
+sudo swapoff -a
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+
+#Install kubeadm, Kubelet, Kubectl, containerd
+sudo apt-get install -y kubelet containerd kubeadm kubectl kubernetes-cni 
+
+# apt-mark hold will prvent the package from being authomatically upgraded or removed
+sudo apt-mark hold kubelet containerd kubeadm kubectl kubernetes-cni 
+
+
+# add containerd and it modules 
+cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+
+# Setup required sysctl params, these persist across reboots.
+sudo cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+
+# Apply sysctl params without reboot
+sudo sysctl --system
+
+# Configure containerd:
+sudo mkdir -p /etc/containerd
+containerd config default | sudo tee /etc/containerd/config.toml
+
+# Restart containerd:
+sudo systemctl restart containerd
+
+# If you get error releated to kubernetes-cni if alreay exists install with out kubernetes-cni
+sudo apt-get install -y kubelet kubeadm kubectl 
+
+# Enable and start kubelet service
+
+sudo systemctl daemon-reload 
+sudo systemctl start kubelet 
+sudo systemctl enable kubelet.service
+
+#continue as root user
+root@master:~# kubeadm init
+
+#switch to ubuntu user
+root@master:~# sudo su - ubuntu
+ubuntu@master:~$ mkdir -p $HOME/.kube
+ubuntu@master:~$ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+ubuntu@master:~$ sudo chown $(id -u):$(id -g) $HOME/.kube/config
+ubuntu@master:~$ kubectl get all
+ubuntu@master:~$ kubectl get nodes
+ubuntu@master:~$ kubectl get pods -o wide -n kube-system
+
+#To install the weave pod network, run the following command:
+ubuntu@master:~$ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+ubuntu@master:~$ kubectl get nodes
+ubuntu@master:~$ kubectl get pods -o wide -n kube-system 
+ubuntu@master:~$ kubectl get all
+ubuntu@master:~$ kubectl get ns
+ubuntu@master:~$ kubectl create ns test
+ubuntu@master:~$ kubectl create ns prod -v=6
+ubuntu@master:~$ vi qa.yml
+ubuntu@master:~$ cat qa.yml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+ubuntu@master:~$ kubectl get ns
+ubuntu@master:~$ kubectl create -f qa.yml -v=7
+ubuntu@master:~$ kubectl get ns
+ubuntu@master:~$ kubectl create ns fintech
+ubuntu@master:~$ kubectl api-resources | grep -i namespace
+ubuntu@master:~$ cat .kube/config
+ubuntu@master:~$ kubectl get all
+ubuntu@master:~$ kubectl get ns -n default
+ubuntu@master:~$ kubectl get all -n default
+ubuntu@master:~$ kubectl get all
+ubuntu@master:~$ kubectl config set-context --current --namespace=default
+ubuntu@master:~$ kubectl get all
+ubuntu@master:~$ kubectl config set-context --current --namespace=test
+ubuntu@master:~$ kubectl get ns
+ubuntu@master:~$ kubectl get pod -n kube-system
+ubuntu@master:~$ mkdir manifests
+ubuntu@master:~$ cd manifests/
+ubuntu@master:~/manifests$ vi pod.yml
+ubuntu@master:~/manifests$ cat pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp-pod
+  namespace: dev
+  labels:
+    app: webapp
+spec:
+  containers:
+  - name: webapp-c
+    image: mylandmarktech/java-web-app
+    ports:
+    - containerPort: 8080
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+  namespace: dev
+  labels:
+    app: myapp
+spec:
+  containers:
+  - name: myapp-c
+    image: mylandmarktech/hello
+    ports:
+    - containerPort: 80
+
+ubuntu@master:~/manifests$ kubectl apply -f pod.yml --dry-run=true
+ubuntu@master:~/manifests$ kubectl apply -f pod.yml --dry-run=client
+ubuntu@master:~/manifests$ kubectl config set-context --current --namespace=dev
+ubuntu@master:~/manifests$ kubectl apply -f pod.yml -v=7
+ubuntu@master:~/manifests$ kubectl get pod
+NAME         READY   STATUS    RESTARTS   AGE
+myapp-pod    1/1     Running   0          39s
+webapp-pod   1/1     Running   0          39s
+ubuntu@master:~/manifests$ kubectl describe pod myapp-pod
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME         READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINES         S GATES
+myapp-pod    1/1     Running   0          7m21s   10.36.0.2   node13   <none>           <none>
+webapp-pod   1/1     Running   0          7m21s   10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ curl -v 10.36.0.2:80
+* Rebuilt URL to: 10.36.0.2:80/
+*   Trying 10.36.0.2...
+* TCP_NODELAY set
+* Connected to 10.36.0.2 (10.36.0.2) port 80 (#0)
+> GET / HTTP/1.1
+> Host: 10.36.0.2
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+
+ubuntu@master:~/manifests$ curl -v 10.36.0.1:8080
+
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME         READY   STATUS    RESTARTS   AGE   IP          NODE     NOMINATED NODE   READINESS GAT      ES
+myapp-pod    1/1     Running   0          12m   10.36.0.2   node13   <none>           <none>
+webapp-pod   1/1     Running   0          12m   10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ curl -v 10.36.0.1:8080/java-web-app
+*   Trying 10.36.0.1...
+* TCP_NODELAY set
+* Connected to 10.36.0.1 (10.36.0.1) port 8080 (#0)
+> GET /java-web-app HTTP/1.1
+> Host: 10.36.0.1:8080
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 302 Found
+
+ubuntu@master:~/manifests$ curl -v 10.36.0.2:80/hello
+ubuntu@master:~/manifests$ curl -v 10.36.0.1:8080/java-web-app
+
+ubuntu@master:~/manifests$ curl -v 10.36.0.2:80/hello
+ubuntu@master:~/manifests$ curl -v 10.36.0.1:8080
+ubuntu@master:~/manifests$ curl -v 10.36.0.2:80
+
+ubuntu@master:~/manifests$ vi pod1.yml
+ubuntu@master:~/manifests$ kubectl get pod
+NAME         READY   STATUS    RESTARTS   AGE
+myapp-pod    1/1     Running   0          43m
+webapp-pod   1/1     Running   0          43m
+ubuntu@master:~/manifests$ kubectl delete pod webapp-pod
+pod "webapp-pod" deleted
+ubuntu@master:~/manifests$ kubectl get pod
+NAME        READY   STATUS    RESTARTS   AGE
+myapp-pod   1/1     Running   0          43m
+ubuntu@master:~/manifests$ kubectl apply -f pod1.yml -v=7
+ubuntu@master:~/manifests$ kubectl describe pod webapp-pod
+ubuntu@master:~/manifests$ curl -v 10.36.0.1:8080/maven-web-app
+ubuntu@master:~/manifests$ kubectl delete pod webapp-pod
+ubuntu@master:~/manifests$ ls
+pod.yml  pod1.yml
+ubuntu@master:~/manifests$ cp pod.yml svc.yml
+ubuntu@master:~/manifests$ ls
+pod.yml  pod1.yml  svc.yml
+ubuntu@master:~/manifests$ kubectl get all
+NAME            READY   STATUS    RESTARTS   AGE
+pod/myapp-pod   1/1     Running   0          49m
+ubuntu@master:~/manifests$ kubectl get all -n default
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   168m
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME        READY   STATUS    RESTARTS   AGE   IP          NODE     NOMINATED NODE   READINESS GATE      S
+myapp-pod   1/1     Running   0          72m   10.36.0.2   node13   <none>           <none>
+ubuntu@master:~/manifests$ vi ss.yml
+ubuntu@master:~/manifests$ cat ss.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: websvc
+  namespace: dev
+spec:
+  type: ClusterIp
+  selector:
+    app: webapp
+  ports:
+   - targetPort: 8080
+     port: 80
+ubuntu@master:~/manifests$ vi pod.yml
+ubuntu@master:~/manifests$ kubectl apply -f pod.yml -v=7
+ubuntu@master:~/manifests$ kubectl get pod
+ubuntu@master:~/manifests$ kubectl get nodes
+ubuntu@master:~/manifests$ vi pod.yml
+ubuntu@master:~/manifests$ kubectl apply -f pod.yml -v=7
+
+ubuntu@master:~/manifests$ vi svc.yml
+ubuntu@master:~/manifests$ cat svc.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: websvc
+  namespace: dev
+spec:
+  type: ClusterIp
+  selector:
+    app: webapp
+  ports:
+   - targetPort: 8080
+     port: 80
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp-pod
+  namespace: dev
+  labels:
+    app: webapp
+spec:
+  containers:
+  - name: webapp-c
+    image: mylandmarktech/java-web-app
+    ports:
+    - containerPort: 8080
+
+ubuntu@master:~/manifests$ kubectl apply -f svc.yml -v=7
+ubuntu@master:~/manifests$ kubectl get all
+
+ubuntu@master:~/manifests$ vi svc.yml
+ubuntu@master:~/manifests$ kubectl apply -f svc.yml
+service/websvc created
+pod/webapp-pod unchanged
+
+ubuntu@master:~/manifests$ kubectl get all
+NAME             READY   STATUS    RESTARTS   AGE
+pod/myapp-pod    1/1     Running   0          142m
+pod/webapp-pod   1/1     Running   0          19m
+
+NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+service/websvc   ClusterIP   10.101.7.190   <none>        80/TCP    6s
+
+ubuntu@master:~/manifests$ cat ss.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: websvc
+  namespace: dev
+spec:
+  type: ClusterIP
+  selector:
+    app: webapp
+  ports:
+   - targetPort: 8080
+     port: 80
+
+ubuntu@master:~/manifests$ kubectl get all
+NAME             READY   STATUS    RESTARTS   AGE
+pod/myapp-pod    1/1     Running   0          144m
+pod/webapp-pod   1/1     Running   0          22m
+
+NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+service/websvc   ClusterIP   10.101.7.190   <none>        80/TCP    2m17s
+ubuntu@master:~/manifests$ kubectl get node
+NAME     STATUS   ROLES                  AGE     VERSION
+master   Ready    control-plane,master   4h23m   v1.23.3
+node1    Ready    <none>                 3h51m   v1.23.3
+node13   Ready    <none>                 3h28m   v1.23.3
+
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME         READY   STATUS    RESTARTS   AGE    IP          NODE     NOMINATED NODE   READINESS GA      TES
+myapp-pod    1/1     Running   0          145m   10.36.0.2   node13   <none>           <none>
+webapp-pod   1/1     Running   0          22m    10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ curl -v 10.101.7.190/
+
+ubuntu@master:~/manifests$ kubectl get ep
+
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+ubuntu@master:~/manifests$ kubectl get svc -o wide
+ubuntu@master:~/manifests$ curl -v 10.101.7.190/java-web-app
+
+ubuntu@master:~/manifests$ vi app.yml
+ubuntu@master:~/manifests$ cat app.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mavenapp-pod
+  labels:
+    app: mavenapp
+spec:
+  containers:
+  - name: mavenapp-c
+    image: mylandmarktech/maven-web-app
+    ports:
+    - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mavenappsvc
+spec:
+  selector:
+    app: mavenapp
+  ports:
+  - port: 80
+    targetPort: 8080
+ubuntu@master:~/manifests$ kubectl apply -f app.yml
+pod/mavenapp-pod created
+service/mavenappsvc created
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME           READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS       GATES
+mavenapp-pod   1/1     Running   0          16s     10.36.0.3   node13   <none>           <none>
+myapp-pod      1/1     Running   0          3h32m   10.36.0.2   node13   <none>           <none>
+webapp-pod     1/1     Running   0          89m     10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ kubectl describe pod mavenapp-pod
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  110s  default-scheduler  Successfully assigned dev/mavenapp-pod to node13
+  Normal  Pulling    109s  kubelet            Pulling image "mylandmarktech/maven-web-app"
+  Normal  Pulled     108s  kubelet            Successfully pulled image "mylandmarktech/maven-web-a      pp" in 962.187197ms
+  Normal  Created    108s  kubelet            Created container mavenapp-c
+  Normal  Started    108s  kubelet            Started container mavenapp-c
+
+ubuntu@master:~/manifests$ kubectl get ep -o wide
+NAME          ENDPOINTS        AGE
+mavenappsvc   10.36.0.3:8080   11m
+websvc        10.36.0.1:8080   80m
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME           READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS       GATES
+mavenapp-pod   1/1     Running   0          11m     10.36.0.3   node13   <none>           <none>
+myapp-pod      1/1     Running   0          3h43m   10.36.0.2   node13   <none>           <none>
+webapp-pod     1/1     Running   0          101m    10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ kubectl get svc -o wide
+NAME          TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE   SELECTOR
+mavenappsvc   ClusterIP   10.97.247.84   <none>        80/TCP    12m   app=mavenapp
+websvc        ClusterIP   10.101.7.190   <none>        80/TCP    81m   app=webapp
+ubuntu@master:~/manifests$ kubectl exec -it mavenapp-pod /bin/bash
+kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exe      c [POD] -- [COMMAND] instead.
+root@mavenapp-pod:/usr/local/tomcat# curl -v websvc/java-web-app
+* Hostname was NOT found in DNS cache
+*   Trying 10.101.7.190...
+* Connected to websvc (10.101.7.190) port 80 (#0)
+
+root@mavenapp-pod:/usr/local/tomcat# exit
+exit
+ubuntu@master:~/manifests$ kubectl get svc -o wide
+NAME          TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE    SELECTOR
+mavenappsvc   ClusterIP   10.97.247.84   <none>        80/TCP    81m    app=mavenapp
+websvc        ClusterIP   10.101.7.190   <none>        80/TCP    150m   app=webapp
+ubuntu@master:~/manifests$ cat app.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mavenapp-pod
+  labels:
+    app: mavenapp
+spec:
+  containers:
+  - name: mavenapp-c
+    image: mylandmarktech/maven-web-app
+    ports:
+    - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mavenappsvc
+spec:
+  selector:
+    app: mavenapp
+  ports:
+  - port: 80
+    targetPort: 8080
+ubuntu@master:~/manifests$ vi nodeapp.yml
+ubuntu@master:~/manifests$ kubectl create secret docker-registry dhcred \
+> --docker-server=docker.io --docker-username=mylandmarktech \
+> --docker-password=Mercy2012
+secret/dhcred created
+ubuntu@master:~/manifests$ cat nodeapp.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nodeapp
+  labels:
+    app: nodeapp
+spec:
+  containers:
+  - name: nodeappc
+    image: mylandmarktech/nodejs-fe-app:1
+    ports:
+    - containerPort: 9981
+  imagePullSecrets:
+  - name: dhcred
+ubuntu@master:~/manifests$ kubectl apply -f nodeapp.yml
+pod/nodeapp created
+ubuntu@master:~/manifests$ kubectl get svc -o wide
+NAME          TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE    SELECTOR
+mavenappsvc   ClusterIP   10.97.247.84   <none>        80/TCP    111m   app=mavenapp
+websvc        ClusterIP   10.101.7.190   <none>        80/TCP    3h     app=webapp
+ubuntu@master:~/manifests$ kubectl get po -o wide
+NAME           READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS       GATES
+mavenapp-pod   1/1     Running   0          112m    10.36.0.3   node13   <none>           <none>
+myapp-pod      1/1     Running   0          5h24m   10.36.0.2   node13   <none>           <none>
+nodeapp        1/1     Running   0          46s     10.36.0.4   node13   <none>           <none>
+webapp-pod     1/1     Running   0          3h21m   10.36.0.1   node13   <none>           <none>
+
+ubuntu@master:~/manifests$ kubectl get secret
+NAME                  TYPE                                  DATA   AGE
+default-token-7bhdt   kubernetes.io/service-account-token   3      5h59m
+dhcred                kubernetes.io/dockerconfigjson        1      9m5s
+ubuntu@master:~/manifests$
+ubuntu@master:~/manifests$ kubectl get secret dhcred -o wide
+NAME     TYPE                             DATA   AGE
+dhcred   kubernetes.io/dockerconfigjson   1      9m26s
+ubuntu@master:~/manifests$
+ubuntu@master:~/manifests$ kubectl get secret dhcred -o yaml
+apiVersion: v1
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJkb2NrZXIuaW8iOnsidXNlcm5hbWUiOiJteWxhbmRtYXJrdGVjaCIsInBhc3N3b3      JkIjoiTWVyY3kyMDEyIiwiYXV0aCI6ImJYbHNZVzVrYldGeWEzUmxZMmc2VFdWeVkza3lNREV5In19fQ==
+kind: Secret
+metadata:
+  creationTimestamp: "2022-02-03T10:04:20Z"
+  name: dhcred
+  namespace: dev
+  resourceVersion: "37227"
+  uid: ec8982d4-a7f0-4ad6-be42-7f5efc708abd
+type: kubernetes.io/dockerconfigjson
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME           READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS       GATES
+mavenapp-pod   1/1     Running   0          135m    10.36.0.3   node13   <none>           <none>
+myapp-pod      1/1     Running   0          5h47m   10.36.0.2   node13   <none>           <none>
+nodeapp        1/1     Running   0          24m     10.36.0.4   node13   <none>           <none>
+webapp-pod     1/1     Running   0          3h44m   10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ kubectl get svc -o wide
+NAME          TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE     SELECTOR
+mavenappsvc   ClusterIP   10.97.247.84   <none>        80/TCP    137m    app=mavenapp
+websvc        ClusterIP   10.101.7.190   <none>        80/TCP    3h26m   app=webapp
+ubuntu@master:~/manifests$ kubectl describe svc websvc
+Name:              websvc
+Namespace:         dev
+Labels:            <none>
+Annotations:       <none>
+Selector:          app=webapp
+Type:              ClusterIP
+IP Family Policy:  SingleStack
+IP Families:       IPv4
+IP:                10.101.7.190
+IPs:               10.101.7.190
+Port:              <unset>  80/TCP
+TargetPort:        8080/TCP
+Endpoints:         10.36.0.1:8080
+Session Affinity:  None
+Events:            <none>
+ubuntu@master:~/manifests$ kubectl get pod -o wide
+NAME           READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS       GATES
+mavenapp-pod   1/1     Running   0          140m    10.36.0.3   node13   <none>           <none>
+myapp-pod      1/1     Running   0          5h51m   10.36.0.2   node13   <none>           <none>
+nodeapp        1/1     Running   0          28m     10.36.0.4   node13   <none>           <none>
+webapp-pod     1/1     Running   0          3h49m   10.36.0.1   node13   <none>           <none>
+ubuntu@master:~/manifests$ kubectl exec -it mavenapp-pod /bin/bash
+kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exe      c [POD] -- [COMMAND] instead.
+root@mavenapp-pod:/usr/local/tomcat# curl -v websvc.dev.svc.cluster.local/java-web-app
+* Hostname was NOT found in DNS cache
+*   Trying 10.101.7.190...
+* Connected to websvc.dev.svc.cluster.local (10.101.7.190) port 80 (#0)
+> GET /java-web-app HTTP/1.1
+> User-Agent: curl/7.38.0
+> Host: websvc.dev.svc.cluster.local
+> Accept: */*
+>
+< HTTP/1.1 302 Found
+
+root@mavenapp-pod:/usr/local/tomcat# exit
+exit
+ubuntu@master:~/manifests$ kubectl get svc
+NAME          TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+mavenappsvc   ClusterIP   10.97.247.84   <none>        80/TCP    164m
+websvc        ClusterIP   10.101.7.190   <none>        80/TCP    3h53m
+ubuntu@master:~/manifests$ kubectl edit svc mavenappsvc
+Edit cancelled, no changes made.
+ubuntu@master:~/manifests$ cat app.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mavenapp-pod
+  labels:
+    app: mavenapp
+spec:
+  containers:
+  - name: mavenapp-c
+    image: mylandmarktech/maven-web-app
+    ports:
+    - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mavenappsvc
+spec:
+  selector:
+    app: mavenapp
+  ports:
+  - port: 80
+    targetPort: 8080
+ubuntu@master:~/manifests$ kubectl get svc mavenappsvc -o yaml
+
+#make sure to edit NodePort to 32000 and change some other comment
+ubuntu@master:~/manifests$ kubectl edit svc mavenappsvc
+service/mavenappsvc edited
+ubuntu@master:~/manifests$ kubectl get svc -o wide
+NAME          TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE     SELECTOR
+mavenappsvc   NodePort    10.97.247.84   <none>        80:32000/TCP   3h52m   app=mavenapp
+websvc        ClusterIP   10.101.7.190   <none>        80/TCP         5h2m    app=webapp
+ubuntu@master:~/manifests$ kubectl describe svc mavenappsvc
+Name:                     mavenappsvc
+Namespace:                dev
+Labels:                   <none>
+Annotations:              <none>
+Selector:                 app=mavenapp
+Type:                     NodePort
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       10.97.247.84
+IPs:                      10.97.247.84
+Port:                     <unset>  80/TCP
+TargetPort:               8080/TCP
+NodePort:                 <unset>  32000/TCP
+Endpoints:                10.36.0.3:8080
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+
+ubuntu@master:~/manifests$ kubectl get node -o wide
+NAME     STATUS   ROLES                  AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE           ION   CONTAINER-RUNTIME
+master   Ready    control-plane,master   9h    v1.23.3   172.31.31.85   <none>        Ubuntu 18.04.6 LTS aws   containerd://1.5.5
+node1    Ready    <none>                 8h    v1.23.3   172.31.1.172   <none>        Ubuntu 18.04.6 LTS aws   containerd://1.5.5
+node13   Ready    <none>                 8h    v1.23.3   172.31.6.54    <none>        Ubuntu 18.04.6 LTS aws   containerd://1.5.5
+ubuntu@master:~/manifests$ kubectl get node
+NAME     STATUS   ROLES                  AGE   VERSION
+master   Ready    control-plane,master   9h    v1.23.3
+node1    Ready    <none>                 8h    v1.23.3
+node13   Ready    <none>                 8h    v1.23.3
+ubuntu@master:~/manifests$ hostname -i
+172.31.31.85 10.32.0.1 fe80::4ab:deff:feaa:f770 fe80::6446:bcff:fe46:6ead fe80::2099:f2ff:fe3b:ca4 fe80::c:42df fe80::30e8:c0ff:fe39:8e97 fe80::d4d1:d6ff:fe1e:3d3e fe80::96:58ff:fe66:d015 fe80::bc8d:e5ff:fede:b
+ubuntu@master:~/manifests$ curl -v 172.31.31.85:32000/maven-web-app
+*   Trying 172.31.31.85...
+* TCP_NODELAY set
+* Connected to 172.31.31.85 (172.31.31.85) port 32000 (#0)
+> GET /maven-web-app HTTP/1.1
+> Host: 172.31.31.85:32000
+> User-Agent: curl/7.58.0
+> Accept: */*
+HTTP/1.1 302 Found
+< Server: Apache-Coyote/1.1
+< Location: http://172.31.31.85:32000/maven-web-app/
+
+# on the website external . any ip from master, or node and port http://3.128.190.1:32000/maven-web-app/
+# ip::32000/maven-web-app/
+ubuntu@master:~/manifests$ curl -v 3.128.190.1:32000/maven-web-app
+
+
+ubuntu@master:~/manifests$ kubectl get pod
+NAME           READY   STATUS    RESTARTS   AGE
+mavenapp-pod   1/1     Running   0          7h32m
+myapp-pod      1/1     Running   0          11h
+nodeapp        1/1     Running   0          5h41m
+webapp-pod     1/1     Running   0          9h
+ubuntu@master:~/manifests$ kubectl delete pod myapp-pod
+pod "myapp-pod" deleted
+ubuntu@master:~/manifests$ kubectl get pod
+NAME           READY   STATUS    RESTARTS   AGE
+mavenapp-pod   1/1     Running   0          7h33m
+nodeapp        1/1     Running   0          5h41m
+webapp-pod     1/1     Running   0          9h
+
+ubuntu@master:~/manifests$ kubectl get pod -n kube-system
+NAME                             READY   STATUS    RESTARTS      AGE
+coredns-64897985d-bhs5h          1/1     Running   0             13h
+coredns-64897985d-pb4rf          1/1     Running   0             13h
+etcd-master                      1/1     Running   0             13h
+kube-apiserver-master            1/1     Running   0             13h
+kube-controller-manager-master   1/1     Running   0             13h
+kube-proxy-45f7n                 1/1     Running   0             12h
+kube-proxy-6mgb8                 1/1     Running   0             12h
+kube-proxy-n5nkj                 1/1     Running   0             13h
+kube-scheduler-master            1/1     Running   0             13h
+weave-net-c476d                  2/2     Running   1 (12h ago)   12h
+weave-net-m5f2d                  2/2     Running   1 (12h ago)   12h
+weave-net-tb8cz                  2/2     Running   1 (12h ago)   12h
+
+
+
+
+#END=======================================================
+
+
+
+
+
+
+
+sudo kubeadm join 172.31.31.85:6443 --token 3nsr9e.roevr39gv684ycpy \
+        --discovery-token-ca-cert-hash sha256:5d085741fb0c15e149c57d46c1dc6b9e377a15007a9b70db5d2e28dd496e4a6b
+
+
+kubeadm join 172.31.31.85:6443 --token 3nsr9e.roevr39gv684ycpy \
+        --discovery-token-ca-cert-hash sha256:5d085741fb0c15e149c57d46c1dc6b9e377a15007a9b70db5d2e28dd496e4a6b
+
+
+==========COMMON FOR MASTER & SLAVES END=====
+
+
+
+===========In Master Node Start====================
+# Steps Only For Kubernetes Master
+
+# Switch to the root user.
+
+sudo su - 
+
+# Initialize Kubernates master by executing below commond.
+
+sudo kubeadm init
+
+#exit as root user & exeucte as normal ubuntu user
+
+sudo su - ubuntu   # HIGHLY IMPORTANT.
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+kubectl get all
+
+
+
+# To verify, if kubectl is working or not, run the following command.
+
+kubectl get pods -o wide -n kube-system
+
+#You will notice from the previous command, that all the pods are running except one: ‘core-dns’. For resolving this we will install a 
+# pod network. To install the weave pod network, run the following command:
+
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
+kubectl get nodes
