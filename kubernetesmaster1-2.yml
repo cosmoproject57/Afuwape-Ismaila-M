@@ -733,7 +733,8 @@ sudo kubeadm join 172.31.31.85:6443 --token 3nsr9e.roevr39gv684ycpy \
         
 
 
-#NODE13_USER_START===============EDIT==TOKEN==BELOW==================================================
+#NODE2 templates have user_data script. which is 
+#NODE_13_USER_START===============EDIT==TOKEN==BELOW======================
 
 #!/bin/bash
 # First, login as ‘root’ user because the following set of commands need to be executed with ‘sudo’ permissions.
