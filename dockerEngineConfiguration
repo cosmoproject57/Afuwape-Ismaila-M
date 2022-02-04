@@ -1,9 +1,16 @@
+#=====INSTANCE_USER_DATA+_SCRIPT_START========================
+
 #!/bin/bash
 sudo hostname docker
 sudo apt update -y
 sudo apt install docker.io -y
 # added ubuntu to docker group.so that ubuntu user can run sudo command without using sudo
 sudo usermod -aG docker ubuntu
+
+#=====INSTANCE_USER_DATA+_SCRIPT_END========================
+
+
+#=====RUN THIS LINE BY LINE ON T2LARGE 10GB UBUNTU 18.04 SERVER========================
 
 # Install java as jenkins dependency
 sudo apt install openjdk-11-jdk -y
