@@ -1,0 +1,383 @@
+#=========================================1===============================================
+#POD & SERVICE for maven-web-app 
+#vi cd manifests/app.yml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mavenapp-pod
+  labels:
+    app: mavenapp
+spec:
+  containers:
+  - name: mavenapp-c
+    image: mylandmarktech/maven-web-app
+    ports:
+    - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mavenappsvc
+spec:
+  selector:
+    app: mavenapp
+  ports:
+  - port: 80
+    targetPort: 8080
+
+#==========================================2==============================================
+#Pod for nodejs-app:1 with tag 1 for PRIVATE DOCKER REPO
+#vi cd manifests/nodeapp.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nodeapp
+  labels:
+    app: nodeapp
+spec:
+  containers:
+  - name: nodeappc
+    image: mylandmarktech/nodejs-fe-app:1
+    ports:
+    - containerPort: 9981
+  imagePullSecrets:
+  - name: dhcred
+
+
+#==========================================3==============================================
+#POD, SERVICE & ClusterIP for java-web-app & hello app. 
+#vi cd cm-manifest/pod.yml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp-pod
+  namespace: dev
+  labels:
+    app: webapp
+spec:
+  containers:
+  - name: webapp-c
+    image: mylandmarktech/java-web-app
+    ports:
+    - containerPort: 8080
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+  namespace: dev
+  labels:
+    app: myapp
+spec:
+  containers:
+  - name: myapp-c
+    image: mylandmarktech/hello
+    ports:
+    - containerPort: 80
+---
+
+#vi cd cm-manifest/ss.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: websvc
+  namespace: dev
+spec:
+  type: ClusterIP
+  selector:
+    app: webapp
+  ports:
+   - targetPort: 8080
+     port: 80
+
+#=========================================4===============================================
+#POD & SERVICE for ISMAILA maven-web-app  
+#vi cd cm-manifest/pod1.yml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp-pod
+  namespace: dev
+  labels:
+    app: webapp
+spec:
+  containers:
+  - name: webapp-c
+    image: ismailaafuwape/maven-web-app
+    ports:
+    - containerPort: 8080
+
+
+
+#=========================================5===============================================
+#Pod & ClusterIP Service for java-web-app
+#vi cd cm-manifest/svc.yml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: websvc
+  namespace: dev
+spec:
+  type: ClusterIP
+  selector:
+    app: webapp
+  ports:
+   - targetPort: 8080
+     port: 80
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp-pod
+  namespace: dev
+  labels:
+    app: webapp
+spec:
+  containers:
+  - name: webapp-c
+    image: mylandmarktech/java-web-app
+    ports:
+    - containerPort: 8080
+
+#==========================================6==============================================
+#DaemonSet for nodejs-app:1 with tag 1
+#vi cd cm-manifest/ds.yml
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: webappds
+spec:
+  selector:
+    matchLabels:
+     app: node-webapp
+  template:
+    metadata:
+      name: webapppod
+      labels:
+        app: node-webapp
+    spec:
+      containers:
+      - name: webappcontainer
+        image: mylandmarktech/nodejs-app:1
+        ports:
+        - containerPort: 9981
+#============================================7============================================
+# to confirm begin
+
+#ReplicationController for java-web-app . can use rc.yml
+#vi cd cm-manifest/rr.yml
+
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: webapp-rr
+  namespace: dev
+spec:
+  replicas: 4
+  selector:
+    app: webapp
+  template:
+    metadata:
+      name: webapp-pod
+      labels:
+        app: webapp
+    spec:
+      containers:
+      - name: webapp-c
+        image: mylandmarktech/java-web-app
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: websvc
+  namespace: dev
+spec:
+  type: NodePort
+  selector:
+    app: webapp
+  ports:
+  - targetPort: 8080
+    port: 80
+    nodePort: 32000
+    
+# to confirm end        
+#===========================================8=============================================
+
+#ReplicaSet & Service for hello app 
+#vi cd cm-manifest/rs.yml
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myapp-rs
+  labels:
+    env: dev
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+     app: myapp
+  template:
+    metadata:
+     name: myapp-c
+     labels:
+       app: myapp
+    spec:
+      containers:
+      - name: web-c
+        image: mylandmarktech/hello
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+ name: myapp-svc
+spec:
+ selector:
+  app: myapp
+ ports:
+ - targetPort: 80
+   port: 80
+   nodePort: 31500
+ type: NodePort
+
+#=========================================9===============================================
+
+#Deployment & Service for springbootapp with mangoDB database
+#vi uat-manifest/app.yml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springapp
+spec:
+  selector:
+    matchLabels:
+      app: springapp
+  replicas: 3
+  template:
+    metadata:
+      name: springapp
+      labels:
+        app: springapp
+    spec:
+      containers:
+        - name: springapp
+          image: mylandmarktech/spring-boot-mongo
+          ports:
+          - containerPort: 8080
+          env:
+          - name: MONGO_DB_USERNAME
+            value: devdb
+          - name: MONGO_DB_PASSWORD
+            value: devdb@123
+          - name: MONGO_DB_HOSTNAME
+            value: mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springapp
+spec:
+  selector:
+    app: springapp
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: LoadBalancer
+  
+#vi uat-manifest/mongo.yml
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: mongodbrs
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+     metadata:
+       name: mongodbpod
+       labels:
+         app: mongodb
+     spec:
+       volumes:
+       - name: hostpathvol
+         hostPath:
+           path: /tmp/mongodbbkp
+       containers:
+       - name: mongodbcontainer
+         image: mongo
+         ports:
+         - containerPort: 27017
+         env:
+         - name: MONGO_INITDB_ROOT_USERNAME
+           value: devdb
+         - name: MONGO_INITDB_ROOT_PASSWORD
+           value: devdb@123
+         volumeMounts:
+         - name: hostpathvol
+           mountPath: /data/db
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  type: ClusterIP
+  selector:
+    app: mongodb
+  ports:
+  - port: 27017
+    targetPort: 27017
+
+#========================================10================================================
+
+#Deployment & Service for maven-web-app
+#vi dip/recreate.yml
+
+kubectl apply -f dip/recreate.yml --dry-run=true
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: mavenapp
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      name: mavenapppod
+      labels:
+        app: mavenapp
+    spec:
+      containers:
+      - name: mavenappcontainer
+        image: legah2045/maven-web-app
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp
+spec:
+  selector:
+    app: mavenapp
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: NodePort
