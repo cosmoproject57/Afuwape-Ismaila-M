@@ -1,0 +1,36 @@
+#need to be fix by me.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: mavenapp
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      name: mavenapppod
+      labels:
+        app: mavenapp
+    spec:
+      containers:
+      - name: mavenappcontainer
+        image: legah2045/maven-web-app
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp
+spec:
+  selector:
+    app: mavenapp
+  ports:
+  - port: 80 
+    targetPort: 8080
+  type: NodePort
