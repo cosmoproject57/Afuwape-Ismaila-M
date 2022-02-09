@@ -1,3 +1,16 @@
+kubectl apply -f dip/recreate.yml --dry-run=true
+kubectl config set-context --current --namespace=uat
+kubectl create ns uat
+kubectl scale rs myapp-rs --replicas 6
+kubectl delete pod/webapp-rr-8p22f pod/webapp-rr-gggkg
+kubectl get svc -o wide
+
+# declerative to make namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+
 #=========================================1===============================================
 #POD & SERVICE for maven-web-app 
 #vi cd manifests/app.yml
