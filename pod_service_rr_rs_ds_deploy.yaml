@@ -524,3 +524,17 @@ spec:
          volumeMounts:
          - name: nfsvol
            mountPath: /data/db
+           
+#ClusterIP Service may be needed as well for efs to talk to our application           
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  type: ClusterIP
+  selector:
+    app: mongodb
+  ports:
+  - port: 27017
+    targetPort: 27017
