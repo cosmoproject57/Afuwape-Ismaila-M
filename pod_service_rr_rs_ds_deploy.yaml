@@ -703,3 +703,122 @@ spec:
   ports:
   - port: 27017
     targetPort: 27017
+    
+    #=========================================14===PersistentVolume===PersistentVolumeClaim===ClusterLocalStorage=======================
+#vi uat-manifest/mongo.yml
+#PersistentVolume, PersistentVolumeClaim, ReplicaSet PersitentVolumn NFS, Service ClusterIP for spring-boot-mongo NFS k8s storage-    
+
+#Mongo db pod with volums(NFS)
+#PersistentVolume example with nfs:
+#use nfs server ip
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-nfs-pv1
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 172.31.32.5
+    path: "/mnt/share"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodb-nfs-pvc
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springapp
+spec:
+  selector:
+    matchLabels:
+      app: springapp
+  replicas: 3
+  template:
+    metadata:
+      name: springapp
+      labels:
+        app: springapp
+    spec:
+      containers:
+        - name: springapp
+          image: mylandmarktech/spring-boot-mongo
+          ports:
+          - containerPort: 8080
+          env:
+          - name: MONGO_DB_USERNAME
+            value: devdb
+          - name: MONGO_DB_PASSWORD
+            value: devdb@123
+          - name: MONGO_DB_HOSTNAME
+            value: mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springapp
+spec:
+  selector:
+    app: springapp
+  ports:
+  - port: 80
+    targetPort: 8080
+    nodePort: 30032
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: mongo
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+     metadata:
+       name: mongodbpod
+       labels:
+         app: mongodb
+     spec:
+       volumes:
+       - name: nfs-pvc-vol
+         persistentVolumeClaim:
+            claimName: mongodb-nfs-pvc
+       containers:
+       - name: mongodbcontainer
+         image: mongo
+         ports:
+         - containerPort: 27017
+         env:
+         - name: MONGO_INITDB_ROOT_USERNAME
+           value: devdb
+         - name: MONGO_INITDB_ROOT_PASSWORD
+           value: devdb@123
+         volumeMounts:
+         - name: nfs-pvc-vol
+           mountPath: /data/db
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  type: ClusterIP
+  selector:
+    app: mongodb
+  ports:
+  - port: 27017
+    targetPort: 27017
