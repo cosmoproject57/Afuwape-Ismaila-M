@@ -822,3 +822,72 @@ spec:
   ports:
   - port: 27017
     targetPort: 27017
+    
+    #=========================================15==ConfigMap , Secret=======================      
+ConfigMap , Secret, Deployment & LoadBalancer Service for spring-boot-mongo
+
+#vi uat-manifest/config.yml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: mongo-configmap
+data:
+  db-password: devdb
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongo-password
+type: Opaque
+stringData:
+  db-password: ZGV2ZGJAMTIz
+
+---
+
+#vi uat-manifest/app.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springapp
+spec:
+  selector:
+    matchLabels:
+      app: springapp
+  replicas: 3
+  template:
+    metadata:
+      name: springapp
+      labels:
+        app: springapp
+    spec:
+      containers:
+        - name: springapp
+          image: mylandmarktech/spring-boot-mongo
+          ports:
+          - containerPort: 8080
+          env:
+          - name: MONGO_DB_USERNAME
+            valueFrom:
+                configMapKeyRef:
+                  name: mongo-configmap
+                  key: db-username
+          - name: MONGO_DB_PASSWORD
+            valueFrom:
+                secretKeyRef:
+                  name: mongo-password
+                  key: db-username
+          - name: MONGO_DB_HOSTNAME
+            value: mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springapp
+spec:
+  selector:
+    app: springapp
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: LoadBalancer
+
