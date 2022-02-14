@@ -926,4 +926,50 @@ spec:
   - port: 80
     targetPort: 8080
   type: LoadBalancer
+  
+#==============================15==ConfigMap , Secret= pass Config mag as a secret  for tomcat-users.xml
+# for users to manage tomcat becos we have diff enviroment like dev, uat, production=====NOT-WORKING-BY-PROFF==NEED TO ADJUST CODE=====      
+# vi webapp.yml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tomcat-users
+data:
+  tomcat-users.xml:
+     <?xml version='1.0' encoding='utf-8'?>
+
+     <tomcat-users xmlns="http://tomcat.apache.org/xml"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://tomcat.apache.org/xml tomcat-users.xs
+                    version="1.0">
+     <user username="tomcat" password="tomcat" roles="admin-gui,manager-gui"/>
+     </tomcat-users>
+
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: app-rc
+# namespace: dev
+spec:
+  replicas: 1
+  selector:
+    app: javawebapp
+  template:
+    metadata:
+      name: javawebapp-pod
+      labels:
+        app: javawebapp
+    spec:
+      volumes:
+      - name: tomcat-userconf
+      configMap:
+      items:
+      - key: "tomcat-users.xml"
+        path: "tomcat-users.xml"
+      containers:
+      - name: javawebapp-container
+        image: mylandmarktech/java-web-app
+        ports:
+        - containerPort: 8080
 
