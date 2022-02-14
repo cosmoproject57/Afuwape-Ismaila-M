@@ -824,8 +824,36 @@ spec:
     targetPort: 27017
     
     #=========================================15==ConfigMap , Secret=======================      
-ConfigMap , Secret, Deployment, NodePort OR LoadBalancer Service for spring-boot-mongo
+ConfigMap , Secret, Deployment, NodePort OR LoadBalancer Service for spring-boot-mongo to deploy with MONGODB DATABASE with encrpty credentials was successful.
 
+# first use base 64 to encrpt enviromental variable for value. value is just like password.  then pass the encrpt password inside the Secret yml file as encrpt db-password.
+ubuntu@master:~$ echo -n 'devdb@123' | base64
+ZGV2ZGJAMTIz
+ubuntu@master:~$ kubectl get secret
+NAME                  TYPE                                  DATA   AGE
+default-token-qz4nc   kubernetes.io/service-account-token   3      4d
+mongo-password        Opaque                                1      58m
+ubuntu@master:~$ vi uat-manifest/config.yml
+ubuntu@master:~$ vi uat-manifest/app.yml
+
+# vi uat-manifest/config.yml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: mongo-configmap
+data:
+  db-username: devdb
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongo-password
+type: Opaque
+stringData:
+  db-password: ZGV2ZGJAMTIz
+
+
+# vi uat-manifest/app.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -872,7 +900,19 @@ spec:
     targetPort: 8080
     nodePort: 32500
   type: NodePort
-  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  type: ClusterIP
+  selector:
+    app: mongo
+  ports:
+  - port: 27017
+    targetPort: 27017
+
 ---
 # ==== OR=======
 apiVersion: v1
