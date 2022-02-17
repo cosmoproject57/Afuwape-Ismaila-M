@@ -973,3 +973,45 @@ spec:
         ports:
         - containerPort: 8080
 
+#==============================16==LIFENESS , READINESS and STARTUP PROBES ====NEED TO WORK ON THIS==================================================
+# for HEALTH CHECK=====      
+# vi probes.yml
+
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: app-rc
+# namespace: dev
+spec:
+  replicas: 1
+  selector:
+    app: javawebapp
+  template:
+    metadata:
+      name: javawebapp-pod
+      labels:
+        app: javawebapp
+    spec:
+      containers:
+      - name: javawebapp-container
+        image: mylandmarktech/java-web-app
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /java-web-app
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /java-web-app
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        startupProbe:
+          httpGet:
+            path: /java-web-app
+            port: 8080
+          failureThreshold: 30
+          periodSeconds: 10
