@@ -1,4 +1,4 @@
-#=====INSTANCE_SCRIPT_START========================
+#==========================================START==========================================================
 # Jenkins, Docker, Kubernetes with AWS ELB, kops Multi-Tier Applications Deployment
 # Intergrate jenkins with - Docker - Kubernetes Integration : deployment
 #!/bin/bash 
@@ -131,3 +131,20 @@ kops update cluster ${NAME} --yes
 
 
 #open jenkins server on UI and cat password on terminal to activate jenkins UI login. Install suggested plugins
+
+#==========================================END==========================================================
+
+
+
+#11) connect to the master node
+sh -i ~/.ssh/id_rsa ubuntu@ipAddress
+ssh -i ~/.ssh/id_rsa ubuntu@3.90.203.23
+
+#To list nodes
+kubectl get nodes 
+
+#12.) To Delete Cluster
+kops delete cluster --name=${NAME} --state=${KOPS_STATE_STORE} --yes
+
+#13.)  IF you want to SSH to Kubernetes Master or Nodes Created by KOPS. You can SSH From KOPS_Server
+sh -i ~/.ssh/id_rsa ubuntu@ipAddress ssh -i ~/.ssh/id_rsa ubuntu@3.90.203.23
