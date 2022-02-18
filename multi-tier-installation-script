@@ -1,0 +1,133 @@
+#=====INSTANCE_SCRIPT_START========================
+# Jenkins, Docker, Kubernetes with AWS ELB, kops Multi-Tier Applications Deployment
+# Intergrate jenkins with - Docker - Kubernetes Integration : deployment
+#!/bin/bash 
+
+#update packages before installing docker.
+# run command as ubuntu user.
+sudo apt update -y
+
+#1.) Install and configure Docker on ubuntu 18.04 in AWS
+sudo apt install docker.io -y
+sudo systemctl start docker
+sudo systemctl enable docker.service
+
+#2.)  Install , start and configure jenkins in ubuntu: 
+# Install java as jenkins dependency
+sudo apt install openjdk-11-jdk -y
+
+sudo wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add - 
+sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+sudo apt update
+sudo apt install jenkins
+sudo systemctl start jenkins
+sudo systemctl status jenkins
+
+# adding jenkins to docker group so that jenkis can execute commands like docker ps
+sudo usermod -aG docker jenkins 
+sudo systemctl restart docker.service
+#sudo systemctl enable docker.service
+
+# adding jenkins to sudoer group so that jenkins can have sudo access to run command like sbin binary. 
+sudo echo "jenkins  ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/jenkins
+
+#check jenkins shell to confirm jenkins got a bin/bash shell. exit and become jenkins user.
+sudo vi /etc/passwd
+
+#switch to jenkins user
+sudo su - jenkins
+
+
+#2a.) install kubectl and configure k8s using kobs . kobs will permit us to configure a production grade k8s cluster.
+# vi kops.sh
+
+#========= copy START HERE kops.sh =========
+
+sudo apt update -y
+sudo apt install unzip wget -y 
+sudo curl https://s3.amazonaws.com/aws-cli/awscli-bundle.zip -o awscli-bundle.zip 
+sudo apt install unzip python -y 
+sudo unzip awscli-bundle.zip 
+sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+
+#.3)install kops softrware on ubuntu instance
+sudo apt install wget -y
+sudo wget https://github.com/kubernetes/kops/releases/download/v1.18.2/kops-linux-amd64
+#sudo wget https://github.com/kubernetes/kops/releases/download/v1.22.0/kops-linux-amd64
+sudo chmod +x kops-linux-amd64
+sudo mv kops-linux-amd64 /usr/local/bin/kops
+
+#.4)  Install kubectl
+sudo curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl 
+sudo chmod +x ./kubectl 
+sudo mv ./kubectl /usr/local/bin/kubectl 
+
+#=========copy END HERE kops.sh =========
+
+
+#create an s3 bukcet. Attach IAM role so that I can create s3 bucket becos kops need s3 bucket for etcd store to store other k8s secrets.
+#aws cli need python. it will bring error becos we have not attach i am role to jenkins.
+aws s3 ls
+ 
+#.5)ON AWS User Interface- Click on yr Ec2Serer, Action, Security, Modify IAM role, Add ADMIN role, SAVE
+#Create an IAM role from AWS Console(UI) or CLI with below Policies. you can also give ADMIN ACESS.
+AmazonEC2FullAccess 
+AmazonS3FullAccess
+IAMFullAccess 
+AmazonVPCFullAccess
+
+# then run, you will be able to see the s3 buckets u have in yr AWS cos the IAM role have been given to jenkis. 
+aws s3 ls
+
+#6) create a new S3 bucket Execute below commond in KOPS Server use unique bucket name if you get bucket name exists error.
+# mb means make bucket.
+# change yr s3 bucket name in line 85, 93 & 94.
+
+aws s3 mb s3://ismailamylandmarktech26.local
+aws s3 ls
+
+# vi into .bashrc 
+vi .bashrc
+
+# define env variables in bashrc
+# include the 2 line of code inside .bashrc file. 
+# Give Unique Name And S3 Bucket which you created. export the information and create k8s cluster
+# k8s cluster name and s3 bucket where my key value and all other certifcate, logfile will be stored in s3bucket.
+export NAME=ismailamylandmarktech.k8s.local
+export KOPS_STATE_STORE=s3://ismailamylandmarktech26.k8s.local
+
+# to refresh
+source .bashrc
+
+#To see the name of our cluster.
+echo $NAME
+
+
+#7.) Create sshkeys before creating cluster.
+# create ssk key and copy the key to the cluster to be able to access the cluster from jenkins server
+ssh-keygen
+
+#8.) Create kubernetes cluster definitions on S3 bucket
+# cluster can be created in same region ( eg- us-east-2a) where the EC2 instance is created.
+# it will also create weave network with the name we have define as environmental variable.
+# created master node -count 1 and 2 worker node created.
+
+kops create cluster --zones us-east-2a --networking weave --master-size t2.medium --master-count 1 --node-size t2.medium --node-count=2 ${NAME}
+
+#To see the cluster that will be created/provision in the aws account. kops will create vpc,asg, subnets, and other infranstructure/resource
+kops get cluster
+
+#To copy the secret file public key into our cluster
+kops create secret --name ${NAME} sshpublickey admin -i ~/.ssh/id_rsa.pub
+ 
+
+#9.) Create kubernetes cluser
+kops update cluster ${NAME} --yes
+ 
+#10) Validate your cluster(KOPS will take some time to create cluster ,Execute below commond after 3 or 4 mins)
+ kops validate cluster
+
+#copy out 5 lines suggested command to know what is happening after 10mins.
+
+
+#open jenkins server on UI and cat password on terminal to activate jenkins UI login. Install suggested plugins
