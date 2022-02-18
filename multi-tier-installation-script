@@ -15,7 +15,7 @@ sudo systemctl enable docker.service
 #2.)  Install , start and configure jenkins in ubuntu: 
 # Install java as jenkins dependency
 sudo apt install openjdk-11-jdk -y
-
+#  add the repository Key & Append the Debian package repository address to the server’s sources.list
 sudo wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add - 
 sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
 sudo apt update
