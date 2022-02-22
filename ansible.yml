@@ -1,3 +1,33 @@
+#vi /etc/ansible/hosts
+[master]
+172.31.31.85 ansible_user=ubuntu ansible_ssh_private_key_file=/tmp/k8.pem
+#172.31.31.85
+[appserver]
+172.31.1.172 ansible_user=ubuntu ansible_ssh_private_key_file=/tmp/k8.pem
+[webservers]
+172.31.19.87 ansible_user=ubuntu ansible_ssh_private_key_file=/tmp/k8.pem
+[dbservers]
+172.31.19.60 ansible_user=ec2-user ansible_ssh_private_key_file=/tmp/k8.pem
+[docker]
+172.31.4.163 # ansible_user=ansible ansible_ssh_public_key_file=~/.ssh/id_rsa.pub
+[dk]
+172.31.4.163 ansible_user=ansible ansible_password=class26
+#172.31.6.54 ansible_user=ubuntu ansible_ssh_private_key_file=/tmp/k8.pem
+
+
+#vi index.html
+<h2>Ansible class26 is good<h2>
+<h1>Very soon, Am going to get multiple deVops 6 figure jobs<h1>
+<p>AMEN</p>
+
+
+#vi v/etc/ansible/ansible.cfg
+# uncomment this to disable SSH key host checking
+host_key_checking = False
+
+ansible@ansible:~$ ssh-keygen
+cat /home/ansible/.ssh/id_rsa.pub
+
 # ansible-playbook -b ansible-createuser.yml -u <userName> --private-key=~/devops.pem
 - hosts: all
   become: true
@@ -67,4 +97,67 @@
         name: httpd
         state: started
 
- 
+ #==========================3===============================     
+# to install & remove packages 
+#vi pkgmgt.yml
+
+- hosts: dk
+  become: yes
+  tasks:
+   - name: Install Packages
+     apt:
+      name: ['unzip', 'git', 'nano', 'wget']
+      update_cache: yes
+      state: absent
+     when: ansible_os_family == "Debian"
+     
+  #==========================4===============================    
+  #using tag to skip
+  
+ #vi apache.yml
+- hosts: dbservers
+  become: true
+  tasks:
+    - name: install apache
+      tags:
+      - install 
+      yum: name=httpd state=present
+    - name: copy the Index page
+      tags:
+      - copy 
+      template: src=index.html dest=/var/www/html/index.html
+    - name: Start apache
+      service: name=httpd state=started
+      tags:
+      - start  
+
+#vi tag.yml
+
+- hosts: localhost
+  become: yes
+  tasks:
+  - name: Install Apache HTTP server on RedHat Server
+    tags:
+      - install
+    yum: 
+      name: httpd
+      state: present
+    when: ansible_os_family == "RedHat"
+  - name: Install Apache HTTP server on Ubuntu server
+    tags:
+      - install
+      - start
+    apt:
+      name: apache2
+      state: present
+    when: ansible_os_family == "Debian"
+  - name: Install Apache HTTP server on CentOS server
+    yum: 
+      name: httpd
+      state: present
+    when: 
+      - ansible_facts['distribution'] == "CentOS"
+      - ansible_facts['distribution_major_version'] == "7"
+  - name: Print the Ansible free memory
+    debug:
+      msg: "free memory is {{ansible_memory_mb.real.free}}"
