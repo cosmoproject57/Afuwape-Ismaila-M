@@ -171,3 +171,34 @@ cat /home/ansible/.ssh/id_rsa.pub
   - name: Print the Ansible free memory
     debug:
       msg: "free memory is {{ansible_memory_mb.real.free}}"
+      
+      
+#==========================5===============================    
+#deployed simple app on redhat server.
+
+#vi apache23.yml
+- hosts: dbservers
+  become: true
+  vars:
+  tasks:
+    - name: install apache
+      package:
+        name: httpd
+        state: latest
+    - name: start  apache
+      systemd:
+        name: httpd
+        state: started
+    - name: copy index.html
+      copy:
+        src: /tmp/index.html
+        dest: /var/www/html/
+
+#vi /tmp/index.html
+<h1>  Welcome to Lanmark </h1>
+<h1>  Welcome to Lanmark </h1>
+<h1> Welcome to Ansible </h1>
+
+#==========================6===============================    
+
+
