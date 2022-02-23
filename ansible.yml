@@ -98,9 +98,19 @@ cat /home/ansible/.ssh/id_rsa.pub
         state: started
 
  #==========================3===============================     
-# to install & remove packages 
+# to install & remove packages with loop in an array
 #vi pkgmgt.yml
+#- hosts: dk #(50 redhat / ubuntu)
 
+- hosts: dk
+  become: yes
+  tasks:
+   - name: Install Packages
+     yum:
+      name: ['unzip', 'git', 'nano', 'wget']
+      update_cache: yes
+      state: latest
+      
 - hosts: dk
   become: yes
   tasks:
