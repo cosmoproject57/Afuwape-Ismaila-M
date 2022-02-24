@@ -55,7 +55,7 @@ cat /home/ansible/.ssh/id_rsa.pub
       dest: /etc/sudoers.d/ansible
       content: 'ansible ALL=(ALL) NOPASSWD: ALL'
       validate: /usr/sbin/visudo -cf %s
-  - name: Disable Password Authentication
+  - name: Enable Password Authentication
     lineinfile:
       dest=/etc/ssh/ssh_config
       regexp='^PasswordAuthentication'
