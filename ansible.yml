@@ -69,7 +69,7 @@ cat /home/ansible/.ssh/id_rsa.pub
     service:
       name=sshd
       state=restarted
-            
+                
 #==========================2===============================     
 #this 2 play-book script will work the same
 #vi apache.yml
