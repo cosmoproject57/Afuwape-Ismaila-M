@@ -1,0 +1,444 @@
+Authenticating with public key "Imported-Openssh-Key: C:\\Users\\afuwa\\Downloads\\k8.pem       "
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                 • MobaXterm Personal Edition v21.4 •                 │
+    │               (SSH client, X server and network tools)               │
+    │                                                                      │
+    │ ➤ SSH session to ec2-user@3.144.7.250                                │
+    │   • Direct SSH      :  ✔                                             │
+    │   • SSH compression :  ✔                                             │
+    │   • SSH-browser     :  ✔                                             │
+    │   • X11-forwarding  :  ✘  (disabled or not supported by server)      │
+    │                                                                      │
+    │ ➤ For more info, ctrl+click on help or visit our website.            │
+    └──────────────────────────────────────────────────────────────────────┘
+
+[ec2-user@ip-172-31-11-130 ~]$  sudo useradd ansible
+[ec2-user@ip-172-31-11-130 ~]$  echo "ansible  ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansible
+[ec2-user@ip-172-31-11-130 ~]$ sudo su ansible
+[ansible@ip-172-31-11-130 ec2-user]$ sudo sed -i "/^[^#]*PasswordAuthentication[[:space:]]no/c\PasswordAuthentication yes" /etc/ssh/sshd_config
+[ansible@ip-172-31-11-130 ec2-user]$ sudo passwd ansible
+Changing password for user ansible.
+New password:
+BAD PASSWORD: The password is shorter than 8 characters
+Retype new password:
+passwd: all authentication tokens updated successfully.
+[ansible@ip-172-31-11-130 ec2-user]$  sudo yum install wget unzip -y 
+Install  2 Packages 
+
+Complete!
+[ansible@ip-172-31-11-130 ec2-user]$ sudo wget https://releases.hashicorp.com/terraform/0.12.26/terraform_0.12.26_linux_amd64.zip
+--2022-02-28 07:22:43--  https://releases.hashicorp.com/terraform/0.12.26/terraform_0.12.26_linux_amd64.zip
+Resolving releases.hashicorp.com (releases.hashicorp.com)... 146.75.37.183, 2a04:4e42:78::439
+Connecting to releases.hashicorp.com (releases.hashicorp.com)|146.75.37.183|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 16838433 (16M) [application/zip]
+Saving to: ‘terraform_0.12.26_linux_amd64.zip’
+
+terraform_0.12.26_linux_ 100%[=================================>]  16.06M  58.9MB/s    in 0.3s
+
+2022-02-28 07:22:43 (58.9 MB/s) - ‘terraform_0.12.26_linux_amd64.zip’ saved [16838433/16838433]
+
+[ansible@ip-172-31-11-130 ec2-user]$  sudo unzip terraform_0.12.26_linux_amd64.zip -d /usr/local/bin/
+Archive:  terraform_0.12.26_linux_amd64.zip
+  inflating: /usr/local/bin/terraform
+[ansible@ip-172-31-11-130 ec2-user]$ export PATH=$PATH:/usr/local/bin
+[ansible@ip-172-31-11-130 ec2-user]$ vi .bashrc
+[ansible@ip-172-31-11-130 ec2-user]$ sudo su ansible
+[ansible@ip-172-31-11-130 ec2-user]$ sudo su - ansible
+Last login: Mon Feb 28 07:24:29 UTC 2022 on pts/0
+[ansible@ip-172-31-11-130 ~]$ vi .bashrc
+[ansible@ip-172-31-11-130 ~]$ vi .bashrc
+[ansible@ip-172-31-11-130 ~]$ source ~/.bashrc
+[ansible@ip-172-31-11-130 ~]$ sudo curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+sudo: apt-key: command not found
+(23) Failed writing body
+[ansible@ip-172-31-11-130 ~]$ wget
+wget: missing URL
+Usage: wget [OPTION]... [URL]...
+
+Try `wget --help' for more options.
+[ansible@ip-172-31-11-130 ~]$  sudo yum install wget unzip -y
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+Last metadata expiration check: 0:07:15 ago on Mon 28 Feb 2022 07:22:06 AM UTC.
+Package wget-1.19.5-10.el8.x86_64 is already installed.
+Package unzip-6.0-45.el8_4.x86_64 is already installed.
+Dependencies resolved.
+Nothing to do.
+Complete!
+[ansible@ip-172-31-11-130 ~]$  wget https://releases.hashicorp.com/terraform/0.12.26/terraform_0.12.26_linux_amd64.zip
+--2022-02-28 07:29:32--  https://releases.hashicorp.com/terraform/0.12.26/terraform_0.12.26_linux_amd64.zip
+Resolving releases.hashicorp.com (releases.hashicorp.com)... 146.75.33.183, 2a04:4e42:79::439
+Connecting to releases.hashicorp.com (releases.hashicorp.com)|146.75.33.183|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 16838433 (16M) [application/zip]
+Saving to: ‘terraform_0.12.26_linux_amd64.zip’
+
+terraform_0.12.26_linux_ 100%[=================================>]  16.06M  58.9MB/s    in 0.3s
+
+2022-02-28 07:29:33 (58.9 MB/s) - ‘terraform_0.12.26_linux_amd64.zip’ saved [16838433/16838433]
+
+[ansible@ip-172-31-11-130 ~]$  sudo unzip terraform_0.12.26_linux_amd64.zip -d /usr/local/bin/
+Archive:  terraform_0.12.26_linux_amd64.zip
+replace /usr/local/bin/terraform? [y]es, [n]o, [A]ll, [N]one, [r]ename: y
+  inflating: /usr/local/bin/terraform
+[ansible@ip-172-31-11-130 ~]$  export PATH=$PATH:/usr/local/bin
+[ansible@ip-172-31-11-130 ~]$ vi .bashrc
+[ansible@ip-172-31-11-130 ~]$ source ~/.bashrc 
+[ansible@ip-172-31-11-130 ~]$ sudo yum install python3 -y 
+[ansible@ip-172-31-11-130 ~]$  sudo alternatives --set python /usr/bin/python3
+[ansible@ip-172-31-11-130 ~]$  sudo yum -y install python3-pip -y 
+[ansible@ip-172-31-11-130 ~]$  pip3 install ansible --user
+Collecting ansible
+  Downloading https://files.pythonhosted.org/packages/fd/f8/071905c6a67592d0852a9f340f6ab9226861eeeb97fdf4068642b22edcf3/ansible-4.10.0.tar.gz (36.8MB)
+    100% |████████████████████████████████| 36.8MB 36kB/s
+Collecting ansible-core~=2.11.7 (from ansible)
+  Downloading https://files.pythonhosted.org/packages/2a/3f/74189f84fc9a4a203fc9644cd62146ba735fd9dd17f94867a272075c3cc7/ansible-core-2.11.8.tar.gz (7.1MB)
+    100% |████████████████████████████████| 7.1MB 192kB/s
+Requirement already satisfied: jinja2 in /usr/lib/python3.6/site-packages (from ansible-core~=2.11.7->ansible)
+Requirement already satisfied: PyYAML in /usr/lib64/python3.6/site-packages (from ansible-core~=2.11.7->ansible)
+Requirement already satisfied: cryptography in /usr/lib64/python3.6/site-packages (from ansible-core~=2.11.7->ansible)
+Collecting packaging (from ansible-core~=2.11.7->ansible)
+  Downloading https://files.pythonhosted.org/packages/05/8e/8de486cbd03baba4deef4142bd643a3e7bbe954a784dc1bb17142572d127/packaging-21.3-py3-none-any.whl (40kB)
+    100% |████████████████████████████████| 40kB 10.1MB/s
+Collecting resolvelib<0.6.0,>=0.5.3 (from ansible-core~=2.11.7->ansible)
+  Downloading https://files.pythonhosted.org/packages/6b/f5/1b4375dbe7e3dddf074d206054ab3e27de0fdb2d32e64a1d5da25f813927/resolvelib-0.5.5-py2.py3-none-any.whl
+Requirement already satisfied: MarkupSafe>=0.23 in /usr/lib64/python3.6/site-packages (from jinja2->ansible-core~=2.11.7->ansible)
+Requirement already satisfied: six>=1.4.1 in /usr/lib/python3.6/site-packages (from cryptography->ansible-core~=2.11.7->ansible)
+Requirement already satisfied: cffi!=1.11.3,>=1.8 in /usr/lib64/python3.6/site-packages (from cryptography->ansible-core~=2.11.7->ansible)
+Collecting pyparsing!=3.0.5,>=2.0.2 (from packaging->ansible-core~=2.11.7->ansible)
+  Downloading https://files.pythonhosted.org/packages/80/c1/23fd82ad3121656b585351aba6c19761926bb0db2ebed9e4ff09a43a3fcc/pyparsing-3.0.7-py3-none-any.whl (98kB)
+    100% |████████████████████████████████| 102kB 10.8MB/s
+Requirement already satisfied: pycparser in /usr/lib/python3.6/site-packages (from cffi!=1.11.3,>=1.8->cryptography->ansible-core~=2.11.7->ansible)
+Installing collected packages: pyparsing, packaging, resolvelib, ansible-core, ansible
+  Running setup.py install for ansible-core ... done
+  Running setup.py install for ansible ... done
+Successfully installed ansible-4.10.0 ansible-core-2.11.8 packaging-21.3 pyparsing-3.0.7 resolvelib-0.5.5
+[ansible@ip-172-31-11-130 ~]$  pip3 install boto3 --user
+[ansible@ip-172-31-11-130 ~]$ sudo mkdir /etc/ansible
+[ansible@ip-172-31-11-130 ~]$ sudo chown ansible:ansible -R /etc/ansible
+[ansible@ip-172-31-11-130 ~]$
+[ansible@ip-172-31-11-130 ~]$ cd /etc/ansible
+[ansible@ip-172-31-11-130 ansible]$ wget https://raw.githubusercontent.com/ansible/ansible/devel/examples/ansible.cfg 
+
+[ansible@ip-172-31-11-130 ansible]$ ls
+ansible.cfg
+[ansible@ip-172-31-11-130 ansible]$ wget https://raw.githubusercontent.com/ansible/ansible/devel/examples/hosts 
+[ansible@ip-172-31-11-130 ansible]$ sudo su - ansible
+Last login: Mon Feb 28 07:24:37 UTC 2022 on pts/0
+[ansible@ip-172-31-11-130 ~]$
+[ansible@ip-172-31-11-130 ~]$
+[ansible@ip-172-31-11-130 ~]$ cd /etc/ansible
+[ansible@ip-172-31-11-130 ansible]$ ls
+ansible.cfg  hosts 
+[ansible@ip-172-31-11-130 ansible]$ sudo yum install git
+Complete!
+[ansible@ip-172-31-11-130 ansible]$ cd
+[ansible@ip-172-31-11-130 ~]$ git clone https://github.com/Landmark-FintechProjects/k8s-ansible.git
+Cloning into 'k8s-ansible'...
+remote: Enumerating objects: 89, done.
+remote: Counting objects: 100% (25/25), done.
+remote: Compressing objects: 100% (25/25), done.
+remote: Total 89 (delta 13), reused 0 (delta 0), pack-reused 64
+Unpacking objects: 100% (89/89), 82.05 KiB | 2.00 MiB/s, done.
+[ansible@ip-172-31-11-130 ~]$ cp -r k8s-ansible/ ks
+[ansible@ip-172-31-11-130 ~]$ ls
+k8s-ansible  ks  terraform_0.12.26_linux_amd64.zip
+[ansible@ip-172-31-11-130 ~]$ cd ks
+[ansible@ip-172-31-11-130 ks]$ ls
+automation.JPG       kube-dependencies.yml  README.md  terafrom_scripts
+DynamicInventory.py  master-cluster.yml     site.yml   workers-cluster.yml
+
+[ansible@ip-172-31-11-130 ks]$ terraform init terafrom_scripts/
+
+Initializing the backend...
+
+
+[ansible@ip-172-31-11-130 ks]$ terraform validate terafrom_scripts/
+Success! The configuration is valid.
+
+[ansible@ip-172-31-11-130 ks]$ terraform plan terafrom_scripts/
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+
+------------------------------------------------------------------------
+
+Error: error configuring Terraform AWS Provider: no valid credential sources for Terraform AWS Provider found.
+
+Please see https://registry.terraform.io/providers/hashicorp/aws
+for more information about providing credentials.
+
+Error: NoCredentialProviders: no valid providers in chain. Deprecated.
+        For verbose messaging see aws.Config.CredentialsChainVerboseErrors
+
+
+  on terafrom_scripts/vpc.tf line 1, in provider "aws":
+   1: provider "aws" {
+
+
+[ansible@ip-172-31-11-130 ks]$ hostname -i
+172.31.11.130
+[ansible@ip-172-31-11-130 ks]$  terraform apply --auto-approve terafrom_scripts/
+aws_vpc.kubernetes: Creating...
+aws_vpc.kubernetes: Creation complete after 3s [id=vpc-0c6c70c1c0a1eb456]
+aws_subnet.kubernetes_subnets[1]: Creating...
+aws_subnet.kubernetes_subnets[0]: Creating...
+aws_internet_gateway.kubernetes_vpc_igw: Creating...
+aws_security_group.kubernetes_sg: Creating...
+aws_internet_gateway.kubernetes_vpc_igw: Creation complete after 2s [id=igw-034ccfdc51a43687d]
+aws_route_table.kubernetes_public_rt: Creating...
+aws_route_table.kubernetes_public_rt: Creation complete after 1s [id=rtb-06fef6913f188ef67]
+aws_security_group.kubernetes_sg: Creation complete after 4s [id=sg-06423a3ec45daada1]
+aws_subnet.kubernetes_subnets[0]: Still creating... [10s elapsed]
+aws_subnet.kubernetes_subnets[1]: Still creating... [10s elapsed]
+aws_subnet.kubernetes_subnets[1]: Creation complete after 12s [id=subnet-013d18473101c4435]
+aws_subnet.kubernetes_subnets[0]: Creation complete after 12s [id=subnet-08f20c5156526401d]
+aws_instance.kubernetes_Servers[0]: Creating...
+aws_route_table_association.rt_sub_association[0]: Creating...
+aws_route_table_association.rt_sub_association[1]: Creating...
+aws_instance.kubernetes_Workers[1]: Creating...
+aws_instance.kubernetes_Workers[0]: Creating...
+aws_route_table_association.rt_sub_association[1]: Creation complete after 1s [id=rtbassoc-030c39ee31e13625c]
+aws_route_table_association.rt_sub_association[0]: Creation complete after 1s [id=rtbassoc-03be2a7c4c1fd396b]
+aws_instance.kubernetes_Servers[0]: Still creating... [10s elapsed]
+aws_instance.kubernetes_Workers[1]: Still creating... [10s elapsed]
+aws_instance.kubernetes_Workers[0]: Still creating... [10s elapsed]
+aws_instance.kubernetes_Servers[0]: Still creating... [20s elapsed]
+aws_instance.kubernetes_Workers[1]: Still creating... [20s elapsed]
+aws_instance.kubernetes_Workers[0]: Still creating... [20s elapsed]
+aws_instance.kubernetes_Servers[0]: Still creating... [30s elapsed]
+aws_instance.kubernetes_Workers[1]: Still creating... [30s elapsed]
+aws_instance.kubernetes_Workers[0]: Still creating... [30s elapsed]
+aws_instance.kubernetes_Servers[0]: Creation complete after 34s [id=i-0b52b54b4bbd0943a]
+aws_instance.kubernetes_Workers[1]: Still creating... [40s elapsed]
+aws_instance.kubernetes_Workers[0]: Still creating... [40s elapsed]
+aws_instance.kubernetes_Workers[1]: Creation complete after 44s [id=i-044d591229b1619a3]
+aws_instance.kubernetes_Workers[0]: Creation complete after 44s [id=i-08bf2c4030d5f9b18]
+
+Apply complete! Resources: 11 added, 0 changed, 0 destroyed.
+[ansible@ip-172-31-11-130 ks]$ vi key
+[ansible@ip-172-31-11-130 ks]$ chmod 400 key
+[ansible@ip-172-31-11-130 ks]$ mv key key24.pem
+[ansible@ip-172-31-11-130 ks]$ ls -l
+total 128
+-rw-rw-r--. 1 ansible ansible 78536 Feb 28 08:01 automation.JPG
+-rw-rw-r--. 1 ansible ansible  1350 Feb 28 08:01 DynamicInventory.py
+-r--------. 1 ansible ansible  1679 Feb 28 08:57 key24.pem
+-rw-rw-r--. 1 ansible ansible  1013 Feb 28 08:01 kube-dependencies.yml
+-rw-rw-r--. 1 ansible ansible   872 Feb 28 08:01 master-cluster.yml
+-rw-rw-r--. 1 ansible ansible  3887 Feb 28 08:01 README.md
+-rw-rw-r--. 1 ansible ansible   264 Feb 28 08:01 site.yml
+drwxrwxr-x. 2 ansible ansible    86 Feb 28 08:01 terafrom_scripts
+-rw-rw-r--. 1 ansible ansible 19474 Feb 28 08:42 terraform.tfstate
+-rw-rw-r--. 1 ansible ansible   599 Feb 28 08:01 workers-cluster.yml
+[ansible@ip-172-31-11-130 ks]$
+[ansible@ip-172-31-11-130 ks]$ chmod +x DynamicInventory.py
+[ansible@ip-172-31-11-130 ks]$ ls -l
+total 128
+-rw-rw-r--. 1 ansible ansible 78536 Feb 28 08:01 automation.JPG
+-rwxrwxr-x. 1 ansible ansible  1350 Feb 28 08:01 DynamicInventory.py
+-r--------. 1 ansible ansible  1679 Feb 28 08:57 key24.pem
+-rw-rw-r--. 1 ansible ansible  1013 Feb 28 08:01 kube-dependencies.yml
+-rw-rw-r--. 1 ansible ansible   872 Feb 28 08:01 master-cluster.yml
+-rw-rw-r--. 1 ansible ansible  3887 Feb 28 08:01 README.md
+-rw-rw-r--. 1 ansible ansible   264 Feb 28 08:01 site.yml
+drwxrwxr-x. 2 ansible ansible    86 Feb 28 08:01 terafrom_scripts
+-rw-rw-r--. 1 ansible ansible 19474 Feb 28 08:42 terraform.tfstate
+-rw-rw-r--. 1 ansible ansible   599 Feb 28 08:01 workers-cluster.yml
+
+[ansible@ip-172-31-11-130 ks]$ export AWS_DEFAULT_REGION=us-west-2
+[ansible@ip-172-31-11-130 ks]$
+[ansible@ip-172-31-11-130 ks]$ ./DynamicInventory.py --list
+{"Name": {"hosts": ["35.87.82.176", "18.237.82.143", "34.221.76.163"]}, "Kubernetes_Servers": {"hosts": ["35.87.82.176", "18.237.82.143", "34.221.76.163"]}, "Type": {"hosts": ["35.87.82.176", "18.237.82.143", "34.221.76.163"]}, "Kubernetes_Master": {"hosts": ["35.87.82.176"]}, "Kubernetes_Worker": {"hosts": ["18.237.82.143", "34.221.76.163"]}}
+[ansible@ip-172-31-11-130 ks]$ ls
+automation.JPG       kube-dependencies.yml  site.yml           workers-cluster.yml
+DynamicInventory.py  master-cluster.yml     terafrom_scripts
+key24.pem            README.md              terraform.tfstate
+[ansible@ip-172-31-11-130 ks]$ vi kube-dependencies.yml
+[ansible@ip-172-31-11-130 ks]$ vi master-cluster.yml
+[ansible@ip-172-31-11-130 ks]$
+[ansible@ip-172-31-11-130 ks]$ ansible-playbook -i DynamicInventory.py site.yml -u ubuntu --private-key=key24.pem  --ssh-common-args='-o StrictHostKeyChecking=no'
+[DEPRECATION WARNING]: Ansible will require Python 3.8 or newer on the controller starting with
+Ansible 2.12. Current version: 3.6.8 (default, Mar 18 2021, 08:58:41) [GCC 8.4.1 20200928 (Red Hat
+ 8.4.1-1)]. This feature will be removed from ansible-core in version 2.12. Deprecation warnings
+can be disabled by setting deprecation_warnings=False in ansible.cfg.
+
+PLAY [Kubernetes_Servers] *************************************************************************
+
+TASK [Gathering Facts] ****************************************************************************
+ok: [34.221.76.163]
+ok: [35.87.82.176]
+ok: [18.237.82.143]
+
+TASK [Docker Installation] ************************************************************************
+changed: [35.87.82.176]
+changed: [34.221.76.163]
+changed: [18.237.82.143]
+
+TASK [install APT Transport HTTPS] ****************************************************************
+changed: [35.87.82.176]
+changed: [34.221.76.163]
+changed: [18.237.82.143]
+
+TASK [add Kubernetes apt-key for APT repository] **************************************************
+changed: [35.87.82.176]
+changed: [18.237.82.143]
+changed: [34.221.76.163]
+
+TASK [add Kubernetes APT repository] **************************************************************
+changed: [35.87.82.176]
+changed: [34.221.76.163]
+changed: [18.237.82.143]
+
+TASK [install kubelet] ****************************************************************************
+changed: [35.87.82.176]
+changed: [34.221.76.163]
+changed: [18.237.82.143]
+
+TASK [install kubeadm] ****************************************************************************
+changed: [35.87.82.176]
+changed: [34.221.76.163]
+changed: [18.237.82.143]
+
+PLAY [Kubernetes_Master] **************************************************************************
+
+TASK [Gathering Facts] ****************************************************************************
+ok: [35.87.82.176]
+
+TASK [install kubectl] ****************************************************************************
+changed: [35.87.82.176]
+
+PLAY [Kubernetes_Master] **************************************************************************
+
+TASK [Gathering Facts] ****************************************************************************
+ok: [35.87.82.176]
+
+TASK [Start the cluster] **************************************************************************
+changed: [35.87.82.176]
+
+TASK [create .kube directory] *********************************************************************
+changed: [35.87.82.176]
+
+TASK [copy admin.conf to user's kube config] ******************************************************
+changed: [35.87.82.176]
+
+TASK [install Pod network] ************************************************************************
+changed: [35.87.82.176]
+
+PLAY [Kubernetes_Master] **************************************************************************
+
+TASK [get join command] ***************************************************************************
+changed: [35.87.82.176]
+
+TASK [Register dummy host with variable It Access In Next Play] ***********************************
+changed: [35.87.82.176]
+
+PLAY [Kubernetes_Worker] **************************************************************************
+
+TASK [Gathering Facts] ****************************************************************************
+ok: [34.221.76.163]
+ok: [18.237.82.143]
+
+//the script break here so you can rerun the command..
+TASK [join cluster] *******************************************************************************
+fatal: [34.221.76.163]: FAILED! => {"changed": true, "cmd": " kubeadm join 172.0.0.121:6443 --token gdivk9.kl5uovstjtwud8x1     --discovery-token-ca-cert-hash sha256:69d60389d80013c45ca6c8efe3c19d56badd2823bb8fe06adf451e06f8c8d37b  >> node_joined.txt", "delta": "0:05:00.747675", "end": "2022-02-28 09:26:38.897017", "msg": "non-zero return code", "rc": 1, "start": "2022-02-28 09:21:38.149342", "stderr": "W0228 09:21:38.195499   17536 join.go:346] [preflight] WARNING: JoinControlPane.controlPlane settings will be ignored when control-plane flag is not set.\n\t[WARNING IsDockerSystemdCheck]: detected \"cgroupfs\" as the Docker cgroup driver. The recommended driver is \"systemd\". Please follow the guide at https://kubernetes.io/docs/setup/cri/\n\t[WARNING SystemVerification]: this Docker version is not on the list of validated versions: 20.10.7. Latest validated version: 19.03\nerror execution phase preflight: couldn't validate the identity of the API Server: could not find a JWS signature in the cluster-info ConfigMap for token ID \"gdivk9\"\nTo see the stack trace of this error execute with --v=5 or higher", "stderr_lines": ["W0228 09:21:38.195499   17536 join.go:346] [preflight] WARNING: JoinControlPane.controlPlane settings will be ignored when control-plane flag is not set.", "\t[WARNING IsDockerSystemdCheck]: detected \"cgroupfs\" as the Docker cgroup driver. The recommended driver is \"systemd\". Please follow the guide at https://kubernetes.io/docs/setup/cri/", "\t[WARNING SystemVerification]: this Docker version is not on the list of validated versions: 20.10.7. Latest validated version: 19.03", "error execution phase preflight: couldn't validate the identity of the API Server: could not find a JWS signature in the cluster-info ConfigMap for token ID \"gdivk9\"", "To see the stack trace of this error execute with --v=5 or higher"], "stdout": "", "stdout_lines": []}
+fatal: [18.237.82.143]: FAILED! => {"changed": true, "cmd": " kubeadm join 172.0.0.121:6443 --token gdivk9.kl5uovstjtwud8x1     --discovery-token-ca-cert-hash sha256:69d60389d80013c45ca6c8efe3c19d56badd2823bb8fe06adf451e06f8c8d37b  >> node_joined.txt", "delta": "0:05:00.962397", "end": "2022-02-28 09:26:39.191340", "msg": "non-zero return code", "rc": 1, "start": "2022-02-28 09:21:38.228943", "stderr": "W0228 09:21:38.275238   17582 join.go:346] [preflight] WARNING: JoinControlPane.controlPlane settings will be ignored when control-plane flag is not set.\n\t[WARNING IsDockerSystemdCheck]: detected \"cgroupfs\" as the Docker cgroup driver. The recommended driver is \"systemd\". Please follow the guide at https://kubernetes.io/docs/setup/cri/\n\t[WARNING SystemVerification]: this Docker version is not on the list of validated versions: 20.10.7. Latest validated version: 19.03\nerror execution phase preflight: couldn't validate the identity of the API Server: could not find a JWS signature in the cluster-info ConfigMap for token ID \"gdivk9\"\nTo see the stack trace of this error execute with --v=5 or higher", "stderr_lines": ["W0228 09:21:38.275238   17582 join.go:346] [preflight] WARNING: JoinControlPane.controlPlane settings will be ignored when control-plane flag is not set.", "\t[WARNING IsDockerSystemdCheck]: detected \"cgroupfs\" as the Docker cgroup driver. The recommended driver is \"systemd\". Please follow the guide at https://kubernetes.io/docs/setup/cri/", "\t[WARNING SystemVerification]: this Docker version is not on the list of validated versions: 20.10.7. Latest validated version: 19.03", "error execution phase preflight: couldn't validate the identity of the API Server: could not find a JWS signature in the cluster-info ConfigMap for token ID \"gdivk9\"", "To see the stack trace of this error execute with --v=5 or higher"], "stdout": "", "stdout_lines": []}
+
+PLAY RECAP ****************************************************************************************
+18.237.82.143              : ok=8    changed=6    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0
+34.221.76.163              : ok=8    changed=6    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0
+35.87.82.176               : ok=16   changed=13   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+[ansible@ip-172-31-11-130 ks]$ ansible-playbook -i DynamicInventory.py site.yml -u ubuntu --private-key=key24.pem  --ssh-common-args='-o StrictHostKeyChecking=no'
+
+PLAY [Kubernetes_Servers] *************************************************************************
+
+TASK [Gathering Facts] ****************************************************************************
+ok: [34.221.76.163]
+ok: [18.237.82.143]
+ok: [35.87.82.176]
+
+//ssh into master node to see the cluster ip
+[ansible@ip-172-31-11-130 ks]$ ls
+automation.JPG       kube-dependencies.yml  site.yml           workers-cluster.yml
+DynamicInventory.py  master-cluster.yml     terafrom_scripts
+key24.pem            README.md              terraform.tfstate
+[ansible@ip-172-31-11-130 ks]$ ssh -i key24.pem ubuntu@35.87.82.176
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.4.0-1045-aws x86_64)
+
+Last login: Mon Feb 28 09:27:54 2022 from 3.144.7.250
+ubuntu@ip-172-0-0-121:~$ kubectl get pod
+No resources found in default namespace.
+ubuntu@ip-172-0-0-121:~$ kubectl get pods
+No resources found in default namespace.
+ubuntu@ip-172-0-0-121:~$ kubectl get all
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   9m39s
+ubuntu@ip-172-0-0-121:~$ exit
+logout
+Connection to 35.87.82.176 closed.
+
+//destroy 
+[ansible@ip-172-31-11-130 ks]$  terraform destroy --auto-approve terafrom_scripts/
+aws_vpc.kubernetes: Refreshing state... [id=vpc-0c6c70c1c0a1eb456]
+aws_security_group.kubernetes_sg: Refreshing state... [id=sg-06423a3ec45daada1]
+aws_subnet.kubernetes_subnets[0]: Refreshing state... [id=subnet-08f20c5156526401d]
+aws_subnet.kubernetes_subnets[1]: Refreshing state... [id=subnet-013d18473101c4435]
+aws_internet_gateway.kubernetes_vpc_igw: Refreshing state... [id=igw-034ccfdc51a43687d]
+aws_route_table.kubernetes_public_rt: Refreshing state... [id=rtb-06fef6913f188ef67]
+aws_instance.kubernetes_Workers[1]: Refreshing state... [id=i-044d591229b1619a3]
+aws_instance.kubernetes_Workers[0]: Refreshing state... [id=i-08bf2c4030d5f9b18]
+aws_instance.kubernetes_Servers[0]: Refreshing state... [id=i-0b52b54b4bbd0943a]
+aws_route_table_association.rt_sub_association[0]: Refreshing state... [id=rtbassoc-03be2a7c4c1fd396b]
+aws_route_table_association.rt_sub_association[1]: Refreshing state... [id=rtbassoc-030c39ee31e13625c]
+aws_route_table_association.rt_sub_association[0]: Destroying... [id=rtbassoc-03be2a7c4c1fd396b]
+aws_route_table_association.rt_sub_association[1]: Destroying... [id=rtbassoc-030c39ee31e13625c]
+aws_instance.kubernetes_Workers[1]: Destroying... [id=i-044d591229b1619a3]
+aws_instance.kubernetes_Servers[0]: Destroying... [id=i-0b52b54b4bbd0943a]
+aws_instance.kubernetes_Workers[0]: Destroying... [id=i-08bf2c4030d5f9b18]
+aws_route_table_association.rt_sub_association[0]: Destruction complete after 0s
+aws_route_table_association.rt_sub_association[1]: Destruction complete after 0s
+aws_route_table.kubernetes_public_rt: Destroying... [id=rtb-06fef6913f188ef67]
+aws_route_table.kubernetes_public_rt: Destruction complete after 1s
+aws_internet_gateway.kubernetes_vpc_igw: Destroying... [id=igw-034ccfdc51a43687d]
+aws_instance.kubernetes_Workers[1]: Still destroying... [id=i-044d591229b1619a3, 10s elapsed]
+aws_instance.kubernetes_Servers[0]: Still destroying... [id=i-0b52b54b4bbd0943a, 10s elapsed]
+aws_instance.kubernetes_Workers[0]: Still destroying... [id=i-08bf2c4030d5f9b18, 10s elapsed]
+aws_internet_gateway.kubernetes_vpc_igw: Still destroying... [id=igw-034ccfdc51a43687d, 10s elapsed]
+aws_instance.kubernetes_Workers[1]: Still destroying... [id=i-044d591229b1619a3, 20s elapsed]
+aws_instance.kubernetes_Servers[0]: Still destroying... [id=i-0b52b54b4bbd0943a, 20s elapsed]
+aws_instance.kubernetes_Workers[0]: Still destroying... [id=i-08bf2c4030d5f9b18, 20s elapsed]
+aws_internet_gateway.kubernetes_vpc_igw: Still destroying... [id=igw-034ccfdc51a43687d, 20s elapsed]
+aws_instance.kubernetes_Workers[1]: Still destroying... [id=i-044d591229b1619a3, 30s elapsed]
+aws_instance.kubernetes_Servers[0]: Still destroying... [id=i-0b52b54b4bbd0943a, 30s elapsed]
+aws_instance.kubernetes_Workers[0]: Still destroying... [id=i-08bf2c4030d5f9b18, 30s elapsed]
+aws_instance.kubernetes_Workers[1]: Destruction complete after 30s
+aws_internet_gateway.kubernetes_vpc_igw: Still destroying... [id=igw-034ccfdc51a43687d, 30s elapsed]
+aws_instance.kubernetes_Workers[0]: Destruction complete after 31s
+aws_internet_gateway.kubernetes_vpc_igw: Destruction complete after 38s
+aws_instance.kubernetes_Servers[0]: Still destroying... [id=i-0b52b54b4bbd0943a, 40s elapsed]
+aws_instance.kubernetes_Servers[0]: Destruction complete after 41s
+aws_subnet.kubernetes_subnets[1]: Destroying... [id=subnet-013d18473101c4435]
+aws_security_group.kubernetes_sg: Destroying... [id=sg-06423a3ec45daada1]
+aws_subnet.kubernetes_subnets[0]: Destroying... [id=subnet-08f20c5156526401d]
+aws_subnet.kubernetes_subnets[1]: Destruction complete after 1s
+aws_subnet.kubernetes_subnets[0]: Destruction complete after 1s
+aws_security_group.kubernetes_sg: Destruction complete after 1s
+aws_vpc.kubernetes: Destroying... [id=vpc-0c6c70c1c0a1eb456]
+aws_vpc.kubernetes: Destruction complete after 0s
+
+Destroy complete! Resources: 11 destroyed.
+[ansible@ip-172-31-11-130 ks]$
+Network error: Software caused connection abort
+
+───────────────────────────────────────────────────────────────────────────────────────────────────
+
+Session stopped
+    - Press <return> to exit tab
+    - Press R to restart session
+    - Press S to save terminal output to file
