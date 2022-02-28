@@ -260,8 +260,12 @@ automation.JPG       kube-dependencies.yml  site.yml           workers-cluster.y
 DynamicInventory.py  master-cluster.yml     terafrom_scripts
 key24.pem            README.md              terraform.tfstate
 [ansible@ip-172-31-11-130 ks]$ vi kube-dependencies.yml
+
+===============//include the master IP address inside master-cluster.yml ==========================
 [ansible@ip-172-31-11-130 ks]$ vi master-cluster.yml
 [ansible@ip-172-31-11-130 ks]$
+
+//change pem key to yr key.
 [ansible@ip-172-31-11-130 ks]$ ansible-playbook -i DynamicInventory.py site.yml -u ubuntu --private-key=key24.pem  --ssh-common-args='-o StrictHostKeyChecking=no'
 [DEPRECATION WARNING]: Ansible will require Python 3.8 or newer on the controller starting with
 Ansible 2.12. Current version: 3.6.8 (default, Mar 18 2021, 08:58:41) [GCC 8.4.1 20200928 (Red Hat
