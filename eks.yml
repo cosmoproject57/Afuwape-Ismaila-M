@@ -1,3 +1,97 @@
+    1  git clone https://github.com/mylandmarktechs/eks-terraform-setup
+    2  cd eks-terraform-setup/
+    3  vi terraform-install.sh
+    
+#!/bin/bash
+# install terraform in ubuntu server script
+sudo apt install wget unzip -y
+wget https://releases.hashicorp.com/terraform/0.12.26/terraform_0.12.26_linux_amd64.zip
+sudo unzip terraform_0.12.26_linux_amd64.zip -d /usr/local/bin/
+Export terraform binary path temporally
+export PATH=$PATH:/usr/local/bin
+#Add path permanently for current user.By Exporting path in .bashrc file at end of file.
+echo  "export PATH=$PATH:/usr/local/bin" >> ~/.bashrc
+# Source .bashrc to reflect for current session
+source ~/.bashrc 
+terraform -version
+ 
+    4  sh terraform-install.sh
+    5  aws cli
+    6  sudo apt  install awscli
+    7  #aws configure
+    8  sudo apt update -y
+    9  sudo apt install curl unzip wget -y
+   10  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+   11  unzip awscliv2.zip
+   12  sudo ./aws/install
+   13  aws cli
+   14  aws configure
+   15  ls
+   16  vi variables.tf
+   17  vi providers.tf
+   18  terraform init
+   19  terraform validate
+   20  terraform apply
+   21  terraform destroy 
+   23  terraform apply 
+   25  aws --version
+   26  aws sts get-caller-identity
+   27  #aws eks --region us-east-1 update-kubeconfig --name terraform-eks-demo
+   28  kubectl get svc
+   29  aws eks --region us-east-1 update-kubeconfig --name terraform-eks-demo
+   30  sudo apt install kubectl
+   31  kubectl get node
+   32  sudo snap install kubectl
+   33  kubectl get pods --kubeconfig ./.kube/config
+   34  clear
+   35  aws eks --region us-east-1 update-kubeconfig --name terraform-eks-demo
+   36  sudo snap install kubectl
+   37  sudo snap install kubectl --classic
+   38  kubectl get svc
+   39  kubectl get pods
+   40  kubectl get pod
+   41  kubectl get all
+   42  kubectl get node
+   43  vi app.yml
+   44  kubectl -f app.yml
+   45  kubectl apply -f app.yml
+   46  kubectl get all -o wide
+   47  kubectl get sc
+   48  nslookup a86c6f991c8a94a7c8c1e12279601606-1816445031.us-east-1.elb.amazonaws.com
+   49  vi app.yml
+   50  curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+   51  chmod 700 get_helm.sh
+   52  ./get_helm.sh
+   53  helm
+   54  helm create springapp
+   55  ls
+   56  cd springapp/
+   57  ls
+   58  tree
+   59  apt  install tree
+   60  tree
+   61  sudo apt  install tree
+   62  tree
+   63  vi  values.yaml
+   64  vi deployment.yaml
+   65  ls
+   66  vi /templates/deployment.yaml
+   67  cd templates
+   68  ls
+   69  vi deployment.yaml
+   70  helm install ismailawebapp springapp
+   71  ls
+   72  cd ..
+   73  ls
+   74  vi  values.yaml
+   75  cd templates
+   76  vi deployment.yaml
+   77  vi  values.yaml
+   78  cd ..
+   79  vi  values.yaml
+   80  cd templates
+   81  helm install ismailawebapp springapp
+
 
 
 
