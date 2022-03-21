@@ -167,7 +167,7 @@ spec:
   type: ClusterIP
   
   
-# ========vi ingress-resource.yml============================================
+# ========vi ingress-resource.yml=====not working for now =======================================
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -185,11 +185,37 @@ spec:
           servicePort: 80
       - path: /app
         backend:
-          serviceName: webappsvc
+          serviceName: myappsvc
           servicePort: 80
       - path: /java-web-app
         backend:
           serviceName: javawebapp
           servicePort: 80
 
+
+# ========vi ingress-resource.yml===============hostbase routing working =========================
+#apiVersion: networking.k8s.io/v1beta1
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-resource-1
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: ismailatechnology.click
+    # secretName: mylandmarktech-ingress-tls
+    http:
+      paths:
+      # Default Path(/)
+      - backend:
+          serviceName: springapp
+          servicePort: 80
+  - host: app.ismailatechnology.click
+    # secretName: mylandmarktech-ingress-tls
+    http:
+      paths:
+      # Default Path(/)
+      - backend:
+          serviceName: myappsvc
+          servicePort: 80
 
