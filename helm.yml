@@ -1,5 +1,5 @@
 # for HELM NGIX-INGRESS LOAD BALANCER deployment 
-#==================================mongodb container / PersistentVolumeClaim / persistentVolumeClaim ==================================
+#======vi app.yml=====================mongodb container / PersistentVolumeClaim / persistentVolumeClaim ==================================
 apiVersion: v1
 kind: Service
 metadata:
@@ -65,7 +65,7 @@ spec:
 
 
 ---
-#=================== springboot app pod / ConfigMap / Secret / Service ==================================
+#========vi app.yml=========== springboot app pod / ConfigMap / Secret / Service ==================================
 
 apiVersion: apps/v1
 kind: Deployment
@@ -130,7 +130,7 @@ spec:
     
     
 ---
-# ===================  mavenweb app 2 / Service ==================================
+# ========vi mavenapp.yml===========  mavenweb app 2 / Service ==================================
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -165,4 +165,31 @@ spec:
   - port: 80
     targetPort: 8080
   type: ClusterIP
+  
+  
+# ========vi ingress-resource.yml============================================
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-resource-1
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: ismailatechnology.click
+    # secretName: mylandmarktech-ingress-tls
+    http:
+      paths:
+      # Default Path(/)
+      - backend:
+          serviceName: springapp
+          servicePort: 80
+      - path: /app
+        backend:
+          serviceName: webappsvc
+          servicePort: 80
+      - path: /java-web-app
+        backend:
+          serviceName: javawebapp
+          servicePort: 80
+
 
