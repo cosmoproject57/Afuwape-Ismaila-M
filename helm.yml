@@ -2,26 +2,12 @@
 #======vi app.yml=====================mongodb container / PersistentVolumeClaim / persistentVolumeClaim ==================================
 
 apiVersion: v1
-kind: Service
-metadata:
-  name: mongo
-spec:
-  type: ClusterIP
-  selector:
-    app: mongodb
-  ports:
-  - port: 27017
-    targetPort: 27017
-    
----
-
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mongodbpvc
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
@@ -64,10 +50,28 @@ spec:
          - name: pvc
            mountPath: /data/db
 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  type: ClusterIP
+  selector:
+    app: mongodb
+  ports:
+  - port: 27017
+    targetPort: 27017
+
+
+
 
 
 ---
 #========vi app.yml=========== springboot app pod / ConfigMap / Secret / Service ==================================
+
+---
+#bottom for springapp deployment
 
 apiVersion: apps/v1
 kind: Deployment
@@ -103,6 +107,19 @@ spec:
           - name: MONGO_DB_HOSTNAME
             value: mongo
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springapp
+spec:
+  selector:
+    app: springapp
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: ClusterIP
+
+---
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -115,25 +132,13 @@ kind: Secret
 metadata:
   name: mongo-db-password
 type: Opaque
-stringData:
+data:
   db-password: ZGV2ZGJAMTIz
----
-    
-apiVersion: v1
-kind: Service
-metadata:
-  name: springapp
-spec:
-  selector:
-    app: springapp
-  ports:
-  - port: 80
-    targetPort: 8080
-  type: ClusterIP
- 
+
 
 ---
 # ========vi mavenapp.yml===========  mavenweb app 2 / Service ==================================
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -154,7 +159,6 @@ spec:
           image: mylandmarktech/maven-web-app
           ports:
           - containerPort: 8080
-
 ---
 
 apiVersion: v1
@@ -168,9 +172,10 @@ spec:
   - port: 80
     targetPort: 8080
   type: ClusterIP
+
   
   
-# ========vi ingress-resource.yml=====not working for now =======================================
+# ========vi ingress-resource.yml==spring-boot-app will work===not working for /app maven-web-app now ========================
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -178,7 +183,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: ismailatechnology.click
+  - host: ismailafintech.com
     # secretName: mylandmarktech-ingress-tls
     http:
       paths:
@@ -194,6 +199,7 @@ spec:
         backend:
           serviceName: javawebapp
           servicePort: 80
+
 
 
 # ========vi ingress-resource.yml===============hostbase routing working =========================
