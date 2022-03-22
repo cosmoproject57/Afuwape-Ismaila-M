@@ -1,18 +1,20 @@
 # for HELM NGIX-INGRESS LOAD BALANCER deployment 
 #======vi app.yml=====================mongodb container / PersistentVolumeClaim / persistentVolumeClaim ==================================
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: springapp
+  name: mongo
 spec:
+  type: ClusterIP
   selector:
     app: mongodb
   ports:
-  - port: 80
-    targetPort: 8080
-  type: ClusterIP
-
+  - port: 27017
+    targetPort: 27017
+    
 ---
+
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -116,19 +118,20 @@ type: Opaque
 stringData:
   db-password: ZGV2ZGJAMTIz
 ---
+    
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongo
+  name: springapp
 spec:
-  type: ClusterIP
   selector:
-    app: mongodb
+    app: springapp
   ports:
-  - port: 27017
-    targetPort: 27017
-    
-    
+  - port: 80
+    targetPort: 8080
+  type: ClusterIP
+ 
+
 ---
 # ========vi mavenapp.yml===========  mavenweb app 2 / Service ==================================
 apiVersion: apps/v1
