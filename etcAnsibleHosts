@@ -1,0 +1,100 @@
+ubuntu@ip-172-31-17-164:~$ sudo adduser ansible
+Adding user `ansible' ...
+Adding new group `ansible' (1001) ...
+Adding new user `ansible' (1001) with group `ansible' ...
+Creating home directory `/home/ansible' ...
+Copying files from `/etc/skel' ...
+Enter new UNIX password:
+Retype new UNIX password:
+No password supplied
+Enter new UNIX password:
+Retype new UNIX password:
+passwd: password updated successfully
+Changing the user information for ansible
+Enter the new value, or press ENTER for the default
+        Full Name []:
+        Room Number []:
+        Work Phone []:
+        Home Phone []:
+        Other []:
+Is the information correct? [Y/n] y
+ubuntu@ip-172-31-17-164:~$ sudo echo "ansible  ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansible
+ansible  ALL=(ALL) NOPASSWD:ALL
+ubuntu@ip-172-31-17-164:~$ sudo su - ansible
+ansible@ip-172-31-17-164:~$ sudo apt-add-repository ppa:ansible/ansible
+Reading package lists... Done
+ansible@ip-172-31-17-164:~$ sudo apt install ansible  -y
+Reading package lists... Done
+
+ansible@ip-172-31-17-164:~$ vi /etc/ansible
+ansible@ip-172-31-17-164:~$ ls /etc/ansible
+ansible.cfg  hosts  roles
+ansible@ip-172-31-17-164:~$ ls /etc/ansible/ansible.cfg
+/etc/ansible/ansible.cfg
+ansible@ip-172-31-17-164:~$ ls /etc/ansible/ansible.cfg/hosts
+ls: cannot access '/etc/ansible/ansible.cfg/hosts': Not a directory
+ansible@ip-172-31-17-164:~$ vi /etc/ansible/ansible.cfg/hosts
+ansible@ip-172-31-17-164:~$ sudo vi /etc/ansible/ansible.cfg/hosts
+ansible@ip-172-31-17-164:~$ sudo chown -R ansible /etc/ansible
+ansible@ip-172-31-17-164:~$ vi /etc/ansible/ansible.cfg/hosts
+ansible@ip-172-31-17-164:~$ vi /etc/ansible
+ansible@ip-172-31-17-164:~$ vi /etc/ansible/ansible.cfg
+ansible@ip-172-31-17-164:~$ vi /etc/ansible/host
+ansible@ip-172-31-17-164:~$ vi /etc/ansible/hosts
+ansible@ip-172-31-17-164:~$ vi /etc/ansible/hosts
+ansible@ip-172-31-17-164:~$ ansible localhost -m ping
+localhost | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+ansible@ip-172-31-17-164:~$ ansible hostubuntu -m ping
+The authenticity of host '172.31.31.26 (172.31.31.26)' can't be established.
+ECDSA key fingerprint is SHA256:c3KPO+vtEzTYqhT/TvdWE7yOngj3M2vm3bDUdhMVtG4.
+Are you sure you want to continue connecting (yes/no)? yes
+172.31.31.26 | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Failed to connect to the host via ssh: Warning: Permanently added '172.6' (ECDSA) to the list of known hosts.\r\nno such identity: /tmp/cosco.pem: No suchr directory\r\nubuntu@172.31.31.26: Permission denied (publickey).",
+    "unreachable": true
+}
+ansible@ip-172-31-17-164:~$ ansible hostredhat -m ping
+The authenticity of host '172.31.20.91 (172.31.20.91)' can't be established.
+ECDSA key fingerprint is SHA256:/dwi7Ia8QK1I9+r8DGuAGSF38reKWuczoZYYhRgMWg4.
+Are you sure you want to continue connecting (yes/no)? yes
+172.31.20.91 | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Failed to connect to the host via ssh: Warning: Permanently added '172.1' (ECDSA) to the list of known hosts.\r\nno such identity: /tmp/cosco.pem: No suchr directory\r\nec2-user@172.31.20.91: Permission denied (publickey,gssapi-keyex,gssh-mic).",
+    "unreachable": true
+}
+ansible@ip-172-31-17-164:~$ ls /tmp
+systemd-private-9811f63575b44413a5b7cbba1836b956-systemd-resolved.service-PzTbkb
+systemd-private-9811f63575b44413a5b7cbba1836b956-systemd-timesyncd.service-SLlIjT
+tmpca1ovms3
+ansible@ip-172-31-17-164:~$ cd tmp
+-su: cd: tmp: No such file or directory
+ansible@ip-172-31-17-164:~$ vi /tmp/cosco.pem
+ansible@ip-172-31-17-164:~$ ls -l /tmp/cosco.pem
+-rw-rw-r-- 1 ansible ansible 1679 May  6 03:12 /tmp/cosco.pem
+ansible@ip-172-31-17-164:~$ chmod 400 /tmp/cosco.pem
+ansible@ip-172-31-17-164:~$ ls -l /tmp/cosco.pem
+-r-------- 1 ansible ansible 1679 May  6 03:12 /tmp/cosco.pem
+ansible@ip-172-31-17-164:~$ vi /etc/ansible/hosts
+ansible@ip-172-31-17-164:~$
+ansible@ip-172-31-17-164:~$ ansible hostubuntu -m ping
+172.31.31.26 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+ansible@ip-172-31-17-164:~$
+ansible@ip-172-31-17-164:~$ ansible hostredhat -m ping
+172.31.20.91 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/libexec/platform-python"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+ansible@ip-172-31-17-164:~$
+
