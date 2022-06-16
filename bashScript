@@ -1,0 +1,17 @@
+#!/bin/bash
+#This script receives user name and dept and add the user to the system.
+echo 'First Name: '; read fname
+echo 'Last Name: '; read lname
+echo 'Department: '; read dept
+
+if sudo grep -q $dept /etc/group
+then
+	sudo useradd -c "$fname $lname" -d /home/$fname -g $dept $fname
+else
+	sudo groupadd $dept
+	sudo useradd -c "$fname $lname" -d /home/$fname -g $dept $fname
+fi
+
+sudo passwd $fname
+
+echo "$fname $lname has been added to the system as a member of the $dept Department"
